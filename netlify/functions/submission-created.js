@@ -41,6 +41,7 @@ exports.handler = async (event) => {
     const body = JSON.parse(event.body || "{}");
     const data = (body.payload && body.payload.data) || {};
     const formName = (body.payload && body.payload.form_name) || "";
+    console.log("TRACE: submission-created invoked. formName =", JSON.stringify(formName));
 
     // "smart-contact" is the consolidated form (replaces the old separate
     // free-resource-gate / lesson-standard / contact forms) — route by the
@@ -475,6 +476,7 @@ function gradeBandFromStandard(standard) {
 }
 
 async function handleStandardsGenerator(data) {
+  console.log("TRACE: handleStandardsGenerator started. data =", JSON.stringify(data));
   const name = data.name || "there";
   const email = data.email || "";
   const standard = (data.standard || "").trim();
@@ -490,6 +492,7 @@ async function handleStandardsGenerator(data) {
   const siteUrl = process.env.SITE_URL || "https://chalkandroots.com";
 
   if (!email || !standard) {
+    console.log("TRACE: exiting early — missing email or standard. email =", email, "standard =", standard);
     return { statusCode: 200, body: "Skipped: missing email or standard" };
   }
   if (!anthropicKey) {
@@ -523,6 +526,7 @@ async function handleStandardsGenerator(data) {
 
   let plan;
   try {
+    console.log("TRACE: calling Anthropic API now...");
     const aiRes = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -552,6 +556,7 @@ async function handleStandardsGenerator(data) {
 
     const cleaned = rawText.replace(/^```json\s*|^```\s*|```\s*$/g, "");
     plan = JSON.parse(cleaned);
+    console.log("TRACE: plan generated successfully. title =", plan.title);
   } catch (err) {
     console.error("Failed to generate or parse plan:", err);
     return { statusCode: 200, body: "AI generation failed" };
@@ -574,6 +579,7 @@ async function handleStandardsGenerator(data) {
   // 3) Email Angella the full draft plus the approval link. Nothing is sent
   // to the teacher until she clicks "Approve & Send".
   if (resendKey) {
+    console.log("TRACE: about to send review email to Angella via Resend...");
     const scheduleHtml = (plan.schedule || [])
       .map(
         (day) =>
@@ -627,6 +633,8 @@ async function handleStandardsGenerator(data) {
       });
       if (!notifyRes.ok) {
         console.error("Failed to send approval-review email:", await notifyRes.text());
+      } else {
+        console.log("TRACE: review email sent successfully to chalkandroots@gmail.com");
       }
     } catch (err) {
       console.error("Approval-review email failed:", err);

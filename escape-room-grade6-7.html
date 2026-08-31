@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  :root{
+    --chalk-green:#1f4d3a;
+    --chalk-green-dark:#163627;
+    --chalk-white:#fdfaf3;
+    --apple-red:#e2483d;
+    --pencil-yellow:#f4c542;
+    --sky-blue:#4a9fd8;
+    --grape:#8b5cf6;
+    --locked:#94a3b8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;padding:0;}
+  #room{
+    font-family:'Comic Sans MS','Trebuchet MS',sans-serif;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 10% 10%, rgba(255,255,255,0.04), transparent 40%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 40px),
+      linear-gradient(160deg, var(--chalk-green), var(--chalk-green-dark));
+    color:var(--chalk-white);
+    padding:20px 16px 60px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .header{
+    text-align:center;
+    max-width:820px;
+    margin:0 auto 20px;
+  }
+  .title{
+    font-size:clamp(24px,5vw,38px);
+    font-weight:900;
+    margin:6px 0 4px;
+    text-shadow:2px 2px 0 rgba(0,0,0,0.25);
+    letter-spacing:0.5px;
+  }
+  .subtitle{
+    font-size:15px;
+    opacity:0.9;
+    margin:0 0 14px;
+  }
+  .status-bar{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
+    background:rgba(0,0,0,0.22);
+    border:2px dashed rgba(255,255,255,0.35);
+    border-radius:16px;
+    padding:10px 18px;
+    max-width:600px;
+    margin:0 auto;
+  }
+  .timer{
+    font-size:20px;
+    font-weight:800;
+    color:var(--pencil-yellow);
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .timer.urgent{ color:var(--apple-red); animation:pulse 1s infinite; }
+  @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
+  .progress-text{ font-size:14px; font-weight:700; }
+
+  .letters-row{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin:18px auto 24px;
+    flex-wrap:wrap;
+    max-width:700px;
+  }
+  .letter-box{
+    width:38px;height:44px;
+    background:rgba(255,255,255,0.08);
+    border:2px solid rgba(255,255,255,0.3);
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;font-weight:900;
+    color:var(--pencil-yellow);
+    transition:all 0.3s;
+  }
+  .letter-box.filled{
+    background:var(--pencil-yellow);
+    color:var(--chalk-green-dark);
+    border-color:var(--pencil-yellow);
+    transform:scale(1.08);
+    box-shadow:0 0 14px rgba(244,197,66,0.7);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:16px;
+    max-width:820px;
+    margin:0 auto;
+  }
+  .locker{
+    background:rgba(255,255,255,0.07);
+    border:3px solid rgba(255,255,255,0.25);
+    border-radius:16px;
+    padding:16px 12px;
+    text-align:center;
+    cursor:pointer;
+    transition:transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    position:relative;
+    min-height:130px;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;
+  }
+  .locker:hover{ transform:translateY(-4px); box-shadow:0 8px 18px rgba(0,0,0,0.3); }
+  .locker.solved{
+    background:rgba(76,201,120,0.18);
+    border-color:#4ade80;
+  }
+  .locker .num{
+    font-size:13px;
+    font-weight:800;
+    background:var(--apple-red);
+    color:white;
+    border-radius:999px;
+    width:26px;height:26px;
+    display:flex;align-items:center;justify-content:center;
+    position:absolute;
+    top:-10px; left:-10px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.3);
+  }
+  .locker .icon{ font-size:34px; }
+  .locker .label{ font-size:13px; font-weight:700; opacity:0.9; }
+  .locker.solved .icon::after{ content:""; }
+  .locker.final{
+    border-color:var(--grape);
+    background:rgba(139,92,246,0.15);
+  }
+  .locker.final.disabled{ opacity:0.55; cursor:not-allowed; }
+
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(10,20,15,0.75);
+    display:none;
+    align-items:center; justify-content:center;
+    z-index:50;
+    padding:16px;
+  }
+  .overlay.active{ display:flex; }
+  .modal{
+    background:var(--chalk-white);
+    color:#1f2937;
+    border-radius:18px;
+    max-width:480px;
+    width:100%;
+    padding:26px 22px 22px;
+    position:relative;
+    box-shadow:0 20px 50px rgba(0,0,0,0.4);
+    animation:popIn 0.25s ease;
+  }
+  @keyframes popIn{ from{ transform:scale(0.85); opacity:0;} to{transform:scale(1);opacity:1;} }
+  .modal h2{ margin:0 0 4px; font-size:20px; color:var(--chalk-green-dark); }
+  .modal .badge{
+    display:inline-block;
+    background:var(--sky-blue); color:white;
+    font-size:12px; font-weight:800;
+    padding:3px 10px; border-radius:999px;
+    margin-bottom:10px;
+  }
+  .modal p.question{ font-size:16px; line-height:1.5; margin:10px 0 14px; }
+  .modal input{
+    width:100%;
+    padding:12px 14px;
+    font-size:16px;
+    border:2px solid #cbd5e1;
+    border-radius:10px;
+    margin-bottom:10px;
+    font-family:inherit;
+  }
+  .modal input:focus{ outline:none; border-color:var(--sky-blue); }
+  .btn-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .btn{
+    border:none; border-radius:10px;
+    padding:11px 16px;
+    font-weight:800;
+    font-size:14px;
+    cursor:pointer;
+    transition:transform 0.1s, opacity 0.2s;
+  }
+  .btn:active{ transform:scale(0.96); }
+  .btn-primary{ background:var(--apple-red); color:white; flex:1; }
+  .btn-hint{ background:var(--pencil-yellow); color:#7a5300; }
+  .btn-close{ background:#e5e7eb; color:#374151; }
+  .feedback{
+    margin-top:10px;
+    font-weight:700;
+    font-size:14px;
+    min-height:20px;
+  }
+  .feedback.wrong{ color:var(--apple-red); }
+  .feedback.right{ color:#16a34a; }
+  .hint-box{
+    background:#fff7e0;
+    border:1px dashed #e0b64a;
+    border-radius:10px;
+    padding:8px 12px;
+    font-size:13px;
+    margin-bottom:10px;
+    display:none;
+  }
+  .hint-box.show{ display:block; }
+
+  /* Burst layer */
+  #burst-layer{
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:60;
+    overflow:hidden;
+  }
+  .note{
+    position:absolute;
+    font-size:26px;
+    animation:floatUp 1.6s ease-out forwards;
+    filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) rotate(0deg) scale(0.6); opacity:0; }
+    15%{ opacity:1; }
+    100%{ transform:translateY(-220px) rotate(30deg) scale(1.2); opacity:0; }
+  }
+  .spark{
+    position:absolute;
+    width:8px;height:8px;
+    border-radius:50%;
+    animation:sparkOut 0.9s ease-out forwards;
+  }
+  @keyframes sparkOut{
+    0%{ transform:translate(0,0) scale(1); opacity:1;}
+    100%{ transform:translate(var(--dx),var(--dy)) scale(0); opacity:0;}
+  }
+
+  /* Final celebration */
+  .final-overlay{
+    position:fixed; inset:0;
+    background:radial-gradient(circle at center, rgba(139,92,246,0.25), rgba(0,0,0,0.8));
+    display:none;
+    align-items:center; justify-content:center;
+    z-index:70;
+    padding:16px;
+  }
+  .final-overlay.active{ display:flex; }
+  .final-card{
+    background:var(--chalk-white);
+    border-radius:22px;
+    padding:34px 26px;
+    max-width:480px;
+    width:100%;
+    text-align:center;
+    color:#1f2937;
+    box-shadow:0 30px 70px rgba(0,0,0,0.5);
+    animation:popIn 0.35s ease;
+  }
+  .final-card .big-emoji{ font-size:60px; margin-bottom:6px; }
+  .final-card h1{ margin:0 0 6px; font-size:26px; color:var(--chalk-green-dark); }
+  .final-card p{ font-size:15px; line-height:1.5; color:#374151; }
+  .word-reveal{
+    font-size:34px;
+    font-weight:900;
+    letter-spacing:4px;
+    color:var(--apple-red);
+    margin:14px 0;
+  }
+
+  footer.note-strip{
+    text-align:center;
+    max-width:700px;
+    margin:26px auto 0;
+    font-size:12px;
+    opacity:0.75;
+  }
+</style>
+</head>
+<body>
+<div id="room">
+  <div class="header">
+    <div class="title">🍎 Classroom Lockdown: Race the Lunch Bell! 🔔</div>
+    <div class="subtitle">Welcome to Week 1! Crack all 8 codes hidden around the room before the lunch bell rings.</div>
+    <div class="status-bar">
+      <div class="timer" id="timer">⏰ 30:00</div>
+      <div class="progress-text" id="progressText">0 / 8 codes cracked</div>
+    </div>
+  </div>
+
+  <div class="letters-row" id="lettersRow"></div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer class="note-strip">Tip: every code you crack reveals a letter above. Puzzle 8 is the final combination lock — use those letters!</footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <button class="btn btn-close" style="position:absolute; top:14px; right:14px; padding:6px 10px;" onclick="closeModal()">✕</button>
+    <span class="badge" id="modalBadge">Code 1</span>
+    <h2 id="modalTitle"></h2>
+    <p class="question" id="modalQuestion"></p>
+    <div class="hint-box" id="hintBox"></div>
+    <input type="text" id="answerInput" placeholder="Type your answer..." autocomplete="off">
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkAnswer()">🔓 Try Code</button>
+      <button class="btn btn-hint" onclick="toggleHint()">💡 Hint</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+
+<div id="burst-layer"></div>
+
+<div class="final-overlay" id="finalOverlay">
+  <div class="final-card">
+    <div class="big-emoji">🎉🍕🔔</div>
+    <h1>YOU BEAT THE BELL!</h1>
+    <p>You cracked every code in the room. Here's what you unlocked:</p>
+    <div class="word-reveal">WELCOME</div>
+    <p>...to Grade 6 &amp; 7 English Language Arts! Time for lunch — great teamwork, detectives. 🥪</p>
+    <button class="btn btn-primary" onclick="document.getElementById('finalOverlay').classList.remove('active')">Nice! Close</button>
+  </div>
+</div>
+
+<script>
+const puzzles = [
+  {
+    id:1, letter:"W", icon:"🎒", label:"Desk 1",
+    title:"Vocabulary Boost", badge:"Code 1",
+    question:"Which word means 'a feeling of amazement or curiosity'? (Hint: it's a synonym for AWE.)",
+    hint:"It's also what you do when you say, 'I ___ what's for lunch today!'",
+    answer:"wonder"
+  },
+  {
+    id:2, letter:"E", icon:"✏️", label:"Desk 2",
+    title:"Grammar Fix-It", badge:"Code 2",
+    question:"What's the word for revising and correcting your writing to fix mistakes before it's finished?",
+    hint:"You do this to your rough draft before it becomes a final copy.",
+    answer:"edit"
+  },
+  {
+    id:3, letter:"L", icon:"📚", label:"Desk 3",
+    title:"School Scavenger", badge:"Code 3",
+    question:"Where in our school can you check out books to read for fun?",
+    hint:"Shhh... it's the quiet room filled with shelves and shelves of books.",
+    answer:"library"
+  },
+  {
+    id:4, letter:"C", icon:"🎭", label:"Desk 4",
+    title:"Story Elements", badge:"Code 4",
+    question:"What do we call a person (or animal) in a story?",
+    hint:"The hero of a story is the main one of these.",
+    answer:"character"
+  },
+  {
+    id:5, letter:"O", icon:"🔊", label:"Desk 5",
+    title:"Sound It Out", badge:"Code 5",
+    question:"Words like 'buzz,' 'crash,' and 'sizzle' that imitate the sound they describe are called...?",
+    hint:"It's a long literary term that starts with 'onoma-'.",
+    answer:"onomatopoeia"
+  },
+  {
+    id:6, letter:"M", icon:"🌟", label:"Desk 6",
+    title:"Figurative Language", badge:"Code 6",
+    question:"Comparing two very different things WITHOUT using 'like' or 'as' (example: 'Time is a thief') is called a...?",
+    hint:"It's a figure of speech, and it is NOT a simile.",
+    answer:"metaphor"
+  },
+  {
+    id:7, letter:"E", icon:"🏫", label:"Desk 7",
+    title:"Class Check-In", badge:"Code 7",
+    question:"What subject are we studying together this year, right here, right now?",
+    hint:"Think Reading + Writing + Language Arts, all in one word.",
+    answer:"english"
+  }
+];
+
+const finalAnswer = "welcome";
+let solved = new Array(7).fill(false);
+let finalSolved = false;
+let currentPuzzle = null;
+let audioCtx = null;
+let secondsLeft = 30*60;
+let timerInterval = null;
+
+function initAudio(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+}
+
+function playTone(freq, startTime, duration, gain){
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.value = freq;
+  g.gain.setValueAtTime(0, startTime);
+  g.gain.linearRampToValueAtTime(gain, startTime+0.02);
+  g.gain.exponentialRampToValueAtTime(0.001, startTime+duration);
+  osc.connect(g); g.connect(audioCtx.destination);
+  osc.start(startTime);
+  osc.stop(startTime+duration+0.05);
+}
+
+function playBurstSound(isFinal){
+  initAudio();
+  const now = audioCtx.currentTime;
+  const notes = isFinal
+    ? [523.25,659.25,783.99,1046.5,1318.5]
+    : [523.25,659.25,783.99,1046.5];
+  notes.forEach((f,i)=>{
+    playTone(f, now + i*0.11, 0.28, isFinal? 0.22 : 0.16);
+  });
+}
+
+function visualBurst(originEl){
+  const layer = document.getElementById('burst-layer');
+  const rect = originEl ? originEl.getBoundingClientRect() : {left:window.innerWidth/2, top:window.innerHeight/2, width:0, height:0};
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top + rect.height/2;
+  const symbols = ["🎵","🎶","♪","♫","✨"];
+  const count = 14;
+  for(let i=0;i<count;i++){
+    const el = document.createElement('div');
+    const isSpark = i % 3 === 0;
+    if(isSpark){
+      el.className = 'spark';
+      const colors = ['#f4c542','#e2483d','#4a9fd8','#8b5cf6','#4ade80'];
+      el.style.background = colors[i % colors.length];
+      const angle = Math.random()*Math.PI*2;
+      const dist = 60 + Math.random()*80;
+      el.style.setProperty('--dx', Math.cos(angle)*dist + 'px');
+      el.style.setProperty('--dy', Math.sin(angle)*dist + 'px');
+    } else {
+      el.className = 'note';
+      el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    }
+    const offsetX = (Math.random()-0.5)*140;
+    el.style.left = (cx + offsetX) + 'px';
+    el.style.top = cy + 'px';
+    el.style.animationDelay = (Math.random()*0.15) + 's';
+    layer.appendChild(el);
+    setTimeout(()=>el.remove(), 1900);
+  }
+}
+
+function renderLetters(){
+  const row = document.getElementById('lettersRow');
+  row.innerHTML = '';
+  puzzles.forEach((p, i)=>{
+    const box = document.createElement('div');
+    box.className = 'letter-box' + (solved[i] ? ' filled' : '');
+    box.textContent = solved[i] ? p.letter : '?';
+    row.appendChild(box);
+  });
+}
+
+function renderGrid(){
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  puzzles.forEach((p, i)=>{
+    const card = document.createElement('div');
+    card.className = 'locker' + (solved[i] ? ' solved' : '');
+    card.onclick = ()=> openPuzzle(i);
+    card.innerHTML = `
+      <div class="num">${p.id}</div>
+      <div class="icon">${solved[i] ? '✅' : p.icon}</div>
+      <div class="label">${p.label}</div>
+    `;
+    grid.appendChild(card);
+  });
+
+  const allSolved = solved.every(s=>s);
+  const finalCard = document.createElement('div');
+  finalCard.className = 'locker final' + (allSolved ? '' : ' disabled') + (finalSolved ? ' solved' : '');
+  finalCard.onclick = ()=> { if(allSolved) openFinalPuzzle(); };
+  finalCard.innerHTML = `
+    <div class="num">8</div>
+    <div class="icon">${finalSolved ? '🎉' : '🔐'}</div>
+    <div class="label">${allSolved ? 'Final Lock — Escape!' : 'Locked (finish 1-7)'}</div>
+  `;
+  grid.appendChild(finalCard);
+
+  document.getElementById('progressText').textContent =
+    (solved.filter(s=>s).length) + ' / 8 codes cracked';
+}
+
+function openPuzzle(i){
+  currentPuzzle = { type:'regular', index:i };
+  const p = puzzles[i];
+  document.getElementById('modalBadge').textContent = p.badge;
+  document.getElementById('modalTitle').textContent = p.title + ' ' + p.icon;
+  document.getElementById('modalQuestion').textContent = p.question;
+  document.getElementById('hintBox').textContent = p.hint;
+  document.getElementById('hintBox').classList.remove('show');
+  document.getElementById('answerInput').value = '';
+  document.getElementById('feedback').textContent = solved[i] ? '✅ Already cracked — nice work!' : '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('overlay').classList.add('active');
+  setTimeout(()=>document.getElementById('answerInput').focus(), 100);
+}
+
+function openFinalPuzzle(){
+  currentPuzzle = { type:'final' };
+  document.getElementById('modalBadge').textContent = 'Code 8 — Final Lock';
+  document.getElementById('modalTitle').textContent = 'Combination Lock 🔐';
+  document.getElementById('modalQuestion').textContent =
+    "Look at the letters you've unlocked above (Codes 1-7). Put them in order to spell the final word and escape before the bell!";
+  document.getElementById('hintBox').textContent = "It's a friendly word your teacher says on the very first day of school!";
+  document.getElementById('hintBox').classList.remove('show');
+  document.getElementById('answerInput').value = '';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('overlay').classList.add('active');
+  setTimeout(()=>document.getElementById('answerInput').focus(), 100);
+}
+
+function closeModal(){
+  document.getElementById('overlay').classList.remove('active');
+  currentPuzzle = null;
+}
+
+function toggleHint(){
+  document.getElementById('hintBox').classList.toggle('show');
+}
+
+function checkAnswer(){
+  const input = document.getElementById('answerInput').value.trim().toLowerCase();
+  const feedback = document.getElementById('feedback');
+
+  if(currentPuzzle && currentPuzzle.type === 'regular'){
+    const i = currentPuzzle.index;
+    const p = puzzles[i];
+    if(input === p.answer){
+      solved[i] = true;
+      feedback.textContent = '✅ Correct! Code cracked!';
+      feedback.className = 'feedback right';
+      renderLetters();
+      renderGrid();
+      playBurstSound(false);
+      visualBurst(document.getElementById('modal'));
+      setTimeout(closeModal, 900);
+    } else if(input.length === 0){
+      feedback.textContent = 'Type an answer first!';
+      feedback.className = 'feedback wrong';
+    } else {
+      feedback.textContent = '❌ Not quite — try again or grab a hint.';
+      feedback.className = 'feedback wrong';
+    }
+  } else if(currentPuzzle && currentPuzzle.type === 'final'){
+    if(input === finalAnswer){
+      finalSolved = true;
+      feedback.textContent = '✅ You escaped!';
+      feedback.className = 'feedback right';
+      renderGrid();
+      playBurstSound(true);
+      visualBurst(document.getElementById('modal'));
+      setTimeout(()=>{
+        closeModal();
+        document.getElementById('finalOverlay').classList.add('active');
+      }, 900);
+    } else if(input.length === 0){
+      feedback.textContent = 'Type an answer first!';
+      feedback.className = 'feedback wrong';
+    } else {
+      feedback.textContent = '❌ Not the final word yet — check your letters above.';
+      feedback.className = 'feedback wrong';
+    }
+  }
+}
+
+document.getElementById('answerInput').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') checkAnswer();
+});
+document.getElementById('overlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'overlay') closeModal();
+});
+
+function formatTime(s){
+  const m = Math.floor(s/60);
+  const sec = s % 60;
+  return m + ':' + (sec<10 ? '0'+sec : sec);
+}
+
+function tickTimer(){
+  secondsLeft--;
+  const timerEl = document.getElementById('timer');
+  if(secondsLeft <= 0){
+    secondsLeft = 0;
+    timerEl.textContent = '🔔 Lunch bell!';
+    clearInterval(timerInterval);
+    return;
+  }
+  timerEl.textContent = '⏰ ' + formatTime(secondsLeft);
+  if(secondsLeft <= 300){
+    timerEl.classList.add('urgent');
+  }
+}
+
+renderLetters();
+renderGrid();
+timerInterval = setInterval(tickTimer, 1000);
+</script>
+</body>
+</html>

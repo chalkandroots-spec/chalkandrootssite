@@ -75,6 +75,10 @@ exports.handler = async (event) => {
       return await handlePollVote(formName, data);
     }
 
+    if (formName === "vault-signup") {
+      return await handleVaultSignup(data);
+    }
+
     if (formName === "standards-generator") {
       return await handleStandardsGenerator(data);
     }
@@ -315,6 +319,46 @@ async function handleFreeResourceGate(data) {
   }
 
   return { statusCode: 200, body: "free-resource-gate handled" };
+}
+
+// Handles the homepage "Get the free AI Prompt Vault" email-gate signup.
+// The visitor already gets their download link client-side on submit, so
+// this just logs the lead to the same sheet as the other lead-capture
+// forms (no per-submission email, to match how free-resource-gate and
+// quiz-result are handled — every submission is still captured in the
+// Netlify Forms dashboard regardless of this function).
+async function handleVaultSignup(data) {
+  const email = data.email || "";
+  const source = data.source || "direct";
+
+  const sheetsUrl = process.env.SHEETS_WEBHOOK_LEADS;
+  if (!sheetsUrl) {
+    console.log("SHEETS_WEBHOOK_LEADS not set — skipping lead sheet log");
+    return { statusCode: 200, body: "Skipped: leads sheet not configured" };
+  }
+  if (!email) {
+    return { statusCode: 200, body: "Skipped: no email provided" };
+  }
+
+  try {
+    const sheetRes = await fetch(sheetsUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        form: "vault-signup",
+        email: email,
+        source: source,
+        timestamp: new Date().toISOString(),
+      }),
+    });
+    if (!sheetRes.ok) {
+      console.error("Leads sheet webhook error:", sheetRes.status, await sheetRes.text());
+    }
+  } catch (sheetErr) {
+    console.error("Leads sheet webhook fetch failed:", sheetErr);
+  }
+
+  return { statusCode: 200, body: "vault-signup handled" };
 }
 
 // Handles the "What's Your Teaching Superpower?" quiz: notifies Angella

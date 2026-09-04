@@ -119,17 +119,20 @@ exports.handler = async () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Chalk & Roots Website <noreply@chalkandroots.com>",
+        from: "Chalk & Roots Digest <onboarding@resend.dev>",
         to: ["chalkandroots@gmail.com"],
         subject: `Daily Digest: ${totalCount} new item${totalCount === 1 ? "" : "s"} — ${today}`,
         html: bodyHtml,
       }),
     });
     if (!res.ok) {
-      console.error("daily-digest: Resend API error:", res.status, await res.text());
+      const errText = await res.text();
+      console.error("daily-digest: Resend API error:", res.status, errText);
+      return { statusCode: 200, body: `Digest generated (${totalCount} items) but email send failed: ${res.status} ${errText}` };
     }
   } catch (err) {
     console.error("daily-digest: Resend fetch failed:", err);
+    return { statusCode: 200, body: `Digest generated (${totalCount} items) but email send threw: ${err}` };
   }
 
   return { statusCode: 200, body: `Digest sent: ${totalCount} items` };

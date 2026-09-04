@@ -6,7 +6,7 @@
 //
 // Requires environment variables, set in Netlify:
 //   RESEND_API_KEY               -- your API key from https://resend.com
-//   AIRTABLE_API_KEY               -- a Personal Access Token from
+//   AirTable_API_Key                -- a Personal Access Token from
 //                                     https://airtable.com/create/tokens, scoped to
 //                                     data.records:write on the "Chalk & Roots
 //                                     Website Leads" base. Leads/Standards/Polls
@@ -35,10 +35,10 @@ const crypto = require("crypto");
 // Airtable base. Silently no-ops (logging only) if AIRTABLE_API_KEY isn't set,
 // so local/dev deploys and unconfigured sites don't error out.
 async function airtableCreate(tableName, fields) {
-  const apiKey = process.env.AIRTABLE_API_KEY;
+  const apiKey = process.env.AirTable_API_Key || process.env.AIRTABLE_API_KEY;
   const baseId = process.env.AIRTABLE_BASE_ID || "appsKlkufxVhzpE7C";
   if (!apiKey) {
-    console.log("AIRTABLE_API_KEY not set — skipping Airtable log for", tableName);
+    console.log("AirTable_API_Key not set — skipping Airtable log for", tableName);
     return;
   }
   try {

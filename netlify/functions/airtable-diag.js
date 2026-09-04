@@ -6,13 +6,13 @@
 // function log UI. Delete this file once the Airtable wiring is confirmed
 // working.
 exports.handler = async () => {
-  const apiKey = process.env.AIRTABLE_API_KEY;
+  const apiKey = process.env.AirTable_API_Key || process.env.AIRTABLE_API_KEY;
   const baseId = process.env.AIRTABLE_BASE_ID || "appsKlkufxVhzpE7C";
 
   if (!apiKey) {
     return {
       statusCode: 200,
-      body: JSON.stringify({ ok: false, reason: "AIRTABLE_API_KEY is not set in this deploy's environment" }),
+      body: JSON.stringify({ ok: false, reason: "AirTable_API_Key is not set in this deploy's environment" }),
     };
   }
 

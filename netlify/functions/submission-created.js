@@ -6,19 +6,14 @@
 //
 // Requires environment variables, set in Netlify:
 //   RESEND_API_KEY               -- your API key from https://resend.com
-//   SHEETS_WEBHOOK_LESSON_STANDARD -- Google Apps Script Web App URL for the
-//                                     "Standards Request" Google Sheet (optional;
-//                                     lesson-standard rows are skipped if unset)
-//   SHEETS_WEBHOOK_POLLS          -- Google Apps Script Web App URL for a sheet
-//                                     that tallies the AI-use and SOR-interest
-//                                     yes/no polls (optional; votes are skipped
-//                                     if unset, but still land in Netlify Forms)
-//   SHEETS_WEBHOOK_LEADS           -- Google Apps Script Web App URL for a sheet
-//                                     that logs free-resource-gate and quiz-result
-//                                     leads (email + answers). Replaces the old
-//                                     per-submission email notification for these
-//                                     two forms (optional; skipped if unset, but
-//                                     still land in Netlify Forms)
+//   AIRTABLE_API_KEY               -- a Personal Access Token from
+//                                     https://airtable.com/create/tokens, scoped to
+//                                     data.records:write on the "Chalk & Roots
+//                                     Website Leads" base. Leads/Standards/Polls
+//                                     logging is skipped (but submissions still land
+//                                     in Netlify Forms) if unset.
+//   AIRTABLE_BASE_ID                -- defaults to appsKlkufxVhzpE7C (the "Chalk &
+//                                     Roots Website Leads" base) if unset.
 //   ANTHROPIC_API_KEY             -- your API key from https://console.anthropic.com,
 //                                     used by the C&R Standards Generator to draft
 //                                     each lesson/unit plan (required for that
@@ -35,6 +30,36 @@
 //                                     to https://chalkandroots.com if unset.
 
 const crypto = require("crypto");
+
+// Creates one record in the given table of the "Chalk & Roots Website Leads"
+// Airtable base. Silently no-ops (logging only) if AIRTABLE_API_KEY isn't set,
+// so local/dev deploys and unconfigured sites don't error out.
+async function airtableCreate(tableName, fields) {
+  const apiKey = process.env.AIRTABLE_API_KEY;
+  const baseId = process.env.AIRTABLE_BASE_ID || "appsKlkufxVhzpE7C";
+  if (!apiKey) {
+    console.log("AIRTABLE_API_KEY not set — skipping Airtable log for", tableName);
+    return;
+  }
+  try {
+    const res = await fetch(
+      `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fields, typecast: true }),
+      }
+    );
+    if (!res.ok) {
+      console.error("Airtable API error:", tableName, res.status, await res.text());
+    }
+  } catch (err) {
+    console.error("Airtable API fetch failed:", tableName, err);
+  }
+}
 
 exports.handler = async (event) => {
   try {
@@ -286,37 +311,25 @@ async function handleSmartContactGeneral(data) {
 // Netlify Forms dashboard. (Netlify stores every submission there
 // automatically regardless of this function.)
 async function handleFreeResourceGate(data) {
+  const name = data.name || "";
   const email = data.email || "";
-  const gradeBand = data["grade-band"] || "(not provided)";
+  const gradeBand = data["grade-band"] || "";
+  const resource = data.resource || "";
   const source = data.source || "direct";
 
-  const sheetsUrl = process.env.SHEETS_WEBHOOK_LEADS;
-  if (!sheetsUrl) {
-    console.log("SHEETS_WEBHOOK_LEADS not set — skipping lead sheet log");
-    return { statusCode: 200, body: "Skipped: leads sheet not configured" };
-  }
   if (!email) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  try {
-    const sheetRes = await fetch(sheetsUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        form: "free-resource-gate",
-        email: email,
-        gradeBand: gradeBand,
-        source: source,
-        timestamp: new Date().toISOString(),
-      }),
-    });
-    if (!sheetRes.ok) {
-      console.error("Leads sheet webhook error:", sheetRes.status, await sheetRes.text());
-    }
-  } catch (sheetErr) {
-    console.error("Leads sheet webhook fetch failed:", sheetErr);
-  }
+  await airtableCreate("Leads", {
+    Name: name,
+    Email: email,
+    "Grade Band": gradeBand || undefined,
+    Resource: resource || "none / general",
+    Source: "free-resource-gate",
+    "Submitted At": new Date().toISOString(),
+    Notes: source && source !== "direct" ? `source: ${source}` : undefined,
+  });
 
   return { statusCode: 200, body: "free-resource-gate handled" };
 }
@@ -331,32 +344,17 @@ async function handleVaultSignup(data) {
   const email = data.email || "";
   const source = data.source || "direct";
 
-  const sheetsUrl = process.env.SHEETS_WEBHOOK_LEADS;
-  if (!sheetsUrl) {
-    console.log("SHEETS_WEBHOOK_LEADS not set — skipping lead sheet log");
-    return { statusCode: 200, body: "Skipped: leads sheet not configured" };
-  }
   if (!email) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  try {
-    const sheetRes = await fetch(sheetsUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        form: "vault-signup",
-        email: email,
-        source: source,
-        timestamp: new Date().toISOString(),
-      }),
-    });
-    if (!sheetRes.ok) {
-      console.error("Leads sheet webhook error:", sheetRes.status, await sheetRes.text());
-    }
-  } catch (sheetErr) {
-    console.error("Leads sheet webhook fetch failed:", sheetErr);
-  }
+  await airtableCreate("Leads", {
+    Email: email,
+    Resource: "ai-prompt-vault",
+    Source: "vault-signup",
+    "Submitted At": new Date().toISOString(),
+    Notes: source && source !== "direct" ? `source: ${source}` : undefined,
+  });
 
   return { statusCode: 200, body: "vault-signup handled" };
 }
@@ -367,39 +365,22 @@ async function handleVaultSignup(data) {
 async function handleQuizResult(data) {
   const email = data.email || "";
   const timeDrain = data["biggest-time-drain"] || "(not provided)";
-  const gradeBand = data["grade-band"] || "(not provided)";
+  const gradeBand = data["grade-band"] || "";
   const goal = data["goal"] || "(not provided)";
   const source = data.source || "direct";
 
-  const sheetsUrl = process.env.SHEETS_WEBHOOK_LEADS;
-  if (!sheetsUrl) {
-    console.log("SHEETS_WEBHOOK_LEADS not set — skipping lead sheet log");
-    return { statusCode: 200, body: "Skipped: leads sheet not configured" };
-  }
   if (!email) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  try {
-    const sheetRes = await fetch(sheetsUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        form: "quiz-result",
-        email: email,
-        timeDrain: timeDrain,
-        gradeBand: gradeBand,
-        goal: goal,
-        source: source,
-        timestamp: new Date().toISOString(),
-      }),
-    });
-    if (!sheetRes.ok) {
-      console.error("Leads sheet webhook error:", sheetRes.status, await sheetRes.text());
-    }
-  } catch (sheetErr) {
-    console.error("Leads sheet webhook fetch failed:", sheetErr);
-  }
+  await airtableCreate("Leads", {
+    Email: email,
+    "Grade Band": gradeBand || undefined,
+    Resource: "none / general",
+    Source: "quiz-result",
+    "Submitted At": new Date().toISOString(),
+    Notes: `biggest time drain: ${timeDrain}; goal: ${goal}${source && source !== "direct" ? `; source: ${source}` : ""}`,
+  });
 
   return { statusCode: 200, body: "quiz-result handled" };
 }
@@ -407,33 +388,16 @@ async function handleQuizResult(data) {
 // Handles the two one-click yes/no polls (AI use, SOR interest). These are
 // anonymous — no email is captured — so we deliberately do NOT send an email
 // per vote (that would flood the inbox). Instead each vote is appended to a
-// Google Sheet tally if SHEETS_WEBHOOK_POLLS is configured. Every vote is
+// Airtable tally if AIRTABLE_API_KEY is configured. Every vote is
 // always captured in the Netlify Forms dashboard regardless.
 async function handlePollVote(formName, data) {
   const vote = data.vote || "";
-  const sheetsUrl = process.env.SHEETS_WEBHOOK_POLLS;
 
-  if (!sheetsUrl) {
-    console.log("SHEETS_WEBHOOK_POLLS not set — skipping sheet tally");
-    return { statusCode: 200, body: "Skipped: poll sheet not configured" };
-  }
-
-  try {
-    const sheetRes = await fetch(sheetsUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        poll: formName,
-        vote: vote,
-        timestamp: new Date().toISOString(),
-      }),
-    });
-    if (!sheetRes.ok) {
-      console.error("Poll sheet webhook error:", sheetRes.status, await sheetRes.text());
-    }
-  } catch (sheetErr) {
-    console.error("Poll sheet webhook fetch failed:", sheetErr);
-  }
+  await airtableCreate("Polls", {
+    Vote: vote || "(no vote)",
+    "Poll Type": formName,
+    "Submitted At": new Date().toISOString(),
+  });
 
   return { statusCode: 200, body: "poll vote handled" };
 }
@@ -446,23 +410,13 @@ async function handleLessonStandard(data) {
   const email = data.email || "";
   const standard = data.standard || "";
 
-  const sheetsUrl = process.env.SHEETS_WEBHOOK_LESSON_STANDARD;
-  if (sheetsUrl) {
-    try {
-      const sheetRes = await fetch(sheetsUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, standard }),
-      });
-      if (!sheetRes.ok) {
-        console.error("Google Sheets webhook error:", sheetRes.status, await sheetRes.text());
-      }
-    } catch (sheetErr) {
-      console.error("Google Sheets webhook fetch failed:", sheetErr);
-    }
-  } else {
-    console.log("SHEETS_WEBHOOK_LESSON_STANDARD not set — skipping sheet log");
-  }
+  await airtableCreate("Lesson Standard Requests", {
+    Name: name,
+    Email: email,
+    Standard: standard,
+    Source: "lesson-standard",
+    "Submitted At": new Date().toISOString(),
+  });
 
   const apiKey = process.env.RESEND_API_KEY;
   if (apiKey && email) {
@@ -547,6 +501,15 @@ async function handleStandardsGenerator(data) {
     console.error("APPROVAL_SECRET is not set — cannot build a safe approval link");
     return { statusCode: 200, body: "Skipped: approval signing not configured" };
   }
+
+  await airtableCreate("Lesson Standard Requests", {
+    Name: name,
+    Email: email,
+    Standard: standard,
+    Duration: durationRaw,
+    Source: "standards-generator",
+    "Submitted At": new Date().toISOString(),
+  });
 
   // 1) Ask Claude to draft the plan as strict JSON, so the emails on both
   // ends can be rendered cleanly without depending on freeform formatting.

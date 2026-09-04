@@ -1,3 +1,7 @@
 [build]
   functions = "netlify/functions"
   publish = "."
+
+[functions."daily-digest"]
+  # 12:00 UTC = 8:00am US Eastern (EDT); shifts to 7:00am once EST resumes in Nov
+  schedule = "0 12 * * *"

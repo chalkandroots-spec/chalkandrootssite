@@ -9,6 +9,7 @@
 // buildPlanPdf()  -> a single branded document covering the same content,
 // for teachers who'd rather print/read than present.
 
+const fs = require("fs");
 const path = require("path");
 const PptxGenJS = require("pptxgenjs");
 const PDFDocument = require("pdfkit");
@@ -33,6 +34,17 @@ const BRAND = {
 const ASSETS_DIR = path.join(__dirname, "..", "..", "..", "assets");
 const EMBLEM_PATH = path.join(ASSETS_DIR, "chalk-roots-emblem.png");
 const AVATAR_PATH = path.join(ASSETS_DIR, "angella-avatar-illustration.jpg");
+
+// pptxgenjs/pdfkit both throw well after the addImage()/doc.image() call
+// returns (deep in their own async internals), so wrapping those calls in
+// try/catch does NOT actually catch a missing file — it silently kills the
+// whole plan (and blocks the teacher's email) instead. Check existence up
+// front and skip the image entirely if it's not there, so a missing or
+// renamed asset degrades the branding instead of breaking delivery.
+const EMBLEM_EXISTS = fs.existsSync(EMBLEM_PATH);
+const AVATAR_EXISTS = fs.existsSync(AVATAR_PATH);
+if (!EMBLEM_EXISTS) console.error("plan-documents: emblem image not found at", EMBLEM_PATH);
+if (!AVATAR_EXISTS) console.error("plan-documents: avatar image not found at", AVATAR_PATH);
 
 // Serif for headings (stands in for the site's Playfair Display, which
 // can't be embedded portably in .pptx/.pdf), sans-serif for body text
@@ -72,19 +84,15 @@ function addTitleSlide(pptx, plan, meta) {
   // not a plain headshot — give it a full-height panel on the right instead
   // of squeezing it into a small circular crop.
   const AVATAR_PANEL_W = 3.55;
-  try {
+  if (AVATAR_EXISTS) {
     slide.addImage({
       path: AVATAR_PATH,
       x: 10 - AVATAR_PANEL_W, y: 0, w: AVATAR_PANEL_W, h: 5.33,
       sizing: { type: "cover", w: AVATAR_PANEL_W, h: 5.33 },
     });
-  } catch (err) {
-    console.error("plan-documents: failed to embed avatar image:", err);
   }
-  try {
+  if (EMBLEM_EXISTS) {
     slide.addImage({ path: EMBLEM_PATH, x: 0.4, y: 0.35, w: 0.85, h: 0.85 });
-  } catch (err) {
-    console.error("plan-documents: failed to embed emblem image:", err);
   }
 
   const textW = 10 - AVATAR_PANEL_W - 0.8;
@@ -273,15 +281,13 @@ function buildPlanPdf(plan, meta) {
     // the cursor past whichever of the two is taller before continuing —
     // otherwise later sections overlap the image.
     const headerTop = doc.y;
-    const avatarW = 65;
-    const avatarH = avatarW * 1.5; // native 1200x1800 (2:3 portrait)
-    const textX = doc.page.margins.left + avatarW + 16;
+    const avatarW = AVATAR_EXISTS ? 65 : 0;
+    const avatarH = AVATAR_EXISTS ? avatarW * 1.5 : 0; // native 1200x1800 (2:3 portrait)
+    const textX = doc.page.margins.left + avatarW + (AVATAR_EXISTS ? 16 : 0);
     const textW = pageWidth - doc.page.margins.right - textX;
 
-    try {
+    if (AVATAR_EXISTS) {
       doc.image(AVATAR_PATH, doc.page.margins.left, headerTop, { width: avatarW });
-    } catch (err) {
-      console.error("plan-documents: failed to embed avatar in PDF:", err);
     }
 
     doc

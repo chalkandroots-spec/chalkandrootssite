@@ -473,17 +473,6 @@ function unlockFreeGate(resourceKey){
       thanksEl.style.display = 'block';
     }
   }
-  document.querySelectorAll('.free-download-link').forEach(function(a){
-    a.addEventListener('click', function(e){
-      if(!freeGateUnlocked){
-        e.preventDefault();
-        var gate = document.getElementById('freeGate');
-        if(gate){ gate.scrollIntoView({behavior:'smooth', block:'center'}); }
-        var emailField = document.getElementById('fg-email');
-        if(emailField){ emailField.focus(); }
-      }
-    });
-  });
 })();
 (function(){
   var el = document.querySelector('.slide-left');

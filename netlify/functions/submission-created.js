@@ -18,18 +18,8 @@
 //                                     used by the C&R Standards Generator to draft
 //                                     each lesson/unit plan (required for that
 //                                     feature; requests are skipped without it)
-//   APPROVAL_SECRET                -- any long random string you choose yourself.
-//                                     Used to sign the "Approve & Send" links emailed
-//                                     to Angella for the Standards Generator, so a
-//                                     stranger can't guess a link and email a teacher
-//                                     on her behalf. Set it once and never change it
-//                                     (changing it invalidates any pending approval
-//                                     emails already sent). Required for that feature.
-//   SITE_URL                       -- your live site origin, e.g. https://chalkandroots.com
-//                                     Used to build the "Approve & Send" link. Defaults
-//                                     to https://chalkandroots.com if unset.
 
-const crypto = require("crypto");
+const { buildPlanPptx, buildPlanPdf } = require("./lib/plan-documents");
 
 // Creates one record in the given table of the "Chalk & Roots Website Leads"
 // Airtable base. Silently no-ops (logging only) if AIRTABLE_API_KEY isn't set,
@@ -454,24 +444,10 @@ async function handleLessonStandard(data) {
 // C & R Standards Generator (replaces the old Base44 embed)
 // ---------------------------------------------------------------------------
 // Flow: teacher submits the form on the site -> this function calls Claude
-// to draft a full plan -> the draft is signed into a link and emailed to
-// Angella for review -> she clicks "Approve & Send" -> approve-standard-plan.js
-// verifies the signature and emails the finished plan to the teacher.
-//
-// No database is used: the entire draft plan travels inside the signed
-// approval link itself, so nothing needs to be stored between the two steps.
-
-function signPayload(payloadObj) {
-  const secret = process.env.APPROVAL_SECRET;
-  const json = JSON.stringify(payloadObj);
-  const payloadB64 = Buffer.from(json, "utf8").toString("base64url");
-  const sig = crypto.createHmac("sha256", secret).update(payloadB64).digest("base64url");
-  return { payloadB64, sig };
-}
-
-function gradeBandFromStandard(standard) {
-  return standard && standard.toUpperCase().startsWith("ELD") ? "ELD" : "ELA";
-}
+// to draft a full plan -> the draft is rendered into a branded .pptx (one
+// slide per schedule day/week) and .pdf -> both are emailed straight to the
+// teacher as attachments. No manual review step and no database: everything
+// happens in this one function call.
 
 async function handleStandardsGenerator(data) {
   console.log("TRACE: handleStandardsGenerator started. data =", JSON.stringify(data));
@@ -486,8 +462,6 @@ async function handleStandardsGenerator(data) {
 
   const resendKey = process.env.RESEND_API_KEY;
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
-  const approvalSecret = process.env.APPROVAL_SECRET;
-  const siteUrl = process.env.SITE_URL || "https://chalkandroots.com";
 
   if (!email || !standard) {
     console.log("TRACE: exiting early — missing email or standard. email =", email, "standard =", standard);
@@ -497,9 +471,9 @@ async function handleStandardsGenerator(data) {
     console.error("ANTHROPIC_API_KEY is not set — cannot draft plan");
     return { statusCode: 200, body: "Skipped: AI generation not configured" };
   }
-  if (!approvalSecret) {
-    console.error("APPROVAL_SECRET is not set — cannot build a safe approval link");
-    return { statusCode: 200, body: "Skipped: approval signing not configured" };
+  if (!resendKey) {
+    console.error("RESEND_API_KEY is not set — drafted plan but could not email it to the teacher");
+    return { statusCode: 200, body: "Skipped: email service not configured" };
   }
 
   await airtableCreate("Lesson Standard Requests", {
@@ -569,85 +543,91 @@ async function handleStandardsGenerator(data) {
     return { statusCode: 200, body: "AI generation failed" };
   }
 
-  // 2) Sign the whole draft into an approval link. Angella clicking it is
-  // what actually sends the plan to the teacher — nothing goes out before that.
-  const { payloadB64, sig } = signPayload({
-    name,
-    email,
-    standard,
-    gradeBand,
-    durationLabel,
-    plan,
-    createdAt: new Date().toISOString(),
-  });
-  const approveUrl =
-    `${siteUrl}/.netlify/functions/approve-standard-plan?payload=${payloadB64}&sig=${sig}`;
+  // 2) Render the draft into branded .pptx (one slide per schedule day/week)
+  // and .pdf files, styled with the site's own palette and Angella's avatar
+  // art instead of plain white slides.
+  const meta = { name, email, standard, gradeBand, durationLabel };
+  let pptxBuffer, pdfBuffer;
+  try {
+    console.log("TRACE: building pptx/pdf...");
+    [pptxBuffer, pdfBuffer] = await Promise.all([
+      buildPlanPptx(plan, meta),
+      buildPlanPdf(plan, meta),
+    ]);
+  } catch (err) {
+    console.error("Failed to build plan documents:", err);
+    return { statusCode: 200, body: "Document generation failed" };
+  }
 
-  // 3) Email Angella the full draft plus the approval link. Nothing is sent
-  // to the teacher until she clicks "Approve & Send".
-  if (resendKey) {
-    console.log("TRACE: about to send review email to Angella via Resend...");
-    const scheduleHtml = (plan.schedule || [])
-      .map(
-        (day) =>
-          `<div style="margin:14px 0;padding:14px;background:#FBF5EA;border-radius:10px">` +
-          `<p style="margin:0 0 6px;font-weight:800;color:#4A3428">${day.label || ""} — ${day.focus || ""}</p>` +
-          `<ul style="margin:0;padding-left:20px;color:#35302B">` +
-          (day.activities || []).map((a) => `<li>${a}</li>`).join("") +
-          `</ul></div>`
-      )
-      .join("");
+  // 3) Email the finished plan straight to the teacher, with both files
+  // attached. Nothing waits on manual review.
+  const scheduleHtml = (plan.schedule || [])
+    .map(
+      (day) =>
+        `<div style="margin:16px 0;padding:16px;background:#FBF5EA;border-radius:12px">` +
+        `<p style="margin:0 0 8px;font-weight:800;color:#4A3428">${day.label || ""} — ${day.focus || ""}</p>` +
+        `<ul style="margin:0;padding-left:20px;color:#35302B">` +
+        (day.activities || []).map((a) => `<li>${a}</li>`).join("") +
+        `</ul></div>`
+    )
+    .join("");
 
-    const bodyHtml = `
-      <div style="font-family:Arial,Helvetica,sans-serif;color:#35302B;line-height:1.6;max-width:640px;margin:auto">
-        <h2 style="color:#7A9B7A;font-family:Georgia,serif">New Standards Generator request</h2>
-        <p><b>Teacher:</b> ${name} &lt;${email}&gt;<br>
-           <b>Standard:</b> ${standard} (${gradeBand})<br>
-           <b>Duration:</b> ${durationLabel}</p>
-        <hr style="border:none;border-top:1px solid #C8D9C8;margin:20px 0">
-        <h3 style="font-family:Georgia,serif;color:#4A3428">${plan.title || "Draft Plan"}</h3>
-        <p style="color:#6f6760;font-style:italic">${plan.standardExplanation || ""}</p>
-        <p style="font-weight:800;color:#4A3428">Learning Objectives</p>
-        <ul>${(plan.objectives || []).map((o) => `<li>${o}</li>`).join("")}</ul>
-        <p style="font-weight:800;color:#4A3428">Materials &amp; Resources</p>
-        <ul>${(plan.materials || []).map((m) => `<li>${m}</li>`).join("")}</ul>
-        <p style="font-weight:800;color:#4A3428">Schedule</p>
-        ${scheduleHtml}
-        <p style="font-weight:800;color:#4A3428">Instructional Routine</p>
-        <ol>${(plan.instructionalRoutine || []).map((r) => `<li>${r}</li>`).join("")}</ol>
-        <div style="text-align:center;margin:28px 0">
-          <a href="${approveUrl}" style="display:inline-block;background:#C9A227;color:#4A3428;font-weight:900;padding:14px 26px;border-radius:999px;text-decoration:none">
-            🌟 Approve &amp; Send to ${name} &#8594;
-          </a>
-        </div>
-        <p style="font-size:.85rem;color:#6f6760">Nothing is sent to the teacher until you click that button. If this draft needs edits, just reply to this email with what to change instead of clicking approve.</p>
-      </div>`;
+  const teacherHtml = `
+    <div style="font-family:Arial,Helvetica,sans-serif;color:#35302B;line-height:1.65;max-width:640px;margin:auto">
+      <div style="text-align:center;margin-bottom:20px">
+        <h2 style="color:#7A9B7A;font-family:Georgia,serif;margin-bottom:4px">Chalk &amp; Roots</h2>
+        <p style="color:#C9A227;font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem">Your Standards Generator Plan</p>
+      </div>
+      <p>Hi ${name},</p>
+      <p>Here's your plan for <b>${standard}</b> (${gradeBand}), built for ${durationLabel} — attached as both PowerPoint and PDF.</p>
+      <h3 style="font-family:Georgia,serif;color:#4A3428;border-bottom:2px solid #C9A227;padding-bottom:6px">${plan.title || "Your Plan"}</h3>
+      <p style="color:#6f6760;font-style:italic">${plan.standardExplanation || ""}</p>
+      <p style="font-weight:800;color:#4A3428">📌 Learning Objectives</p>
+      <ul>${(plan.objectives || []).map((o) => `<li>${o}</li>`).join("")}</ul>
+      <p style="font-weight:800;color:#4A3428">🧰 Materials &amp; Resources</p>
+      <ul>${(plan.materials || []).map((m) => `<li>${m}</li>`).join("")}</ul>
+      <p style="font-weight:800;color:#4A3428">🗓️ Schedule</p>
+      ${scheduleHtml}
+      <p style="font-weight:800;color:#4A3428">👩‍🏫 Instructional Routine</p>
+      <ol>${(plan.instructionalRoutine || []).map((r) => `<li>${r}</li>`).join("")}</ol>
+      <p style="margin-top:28px">Happy teaching!<br>Angella<br>
+        <a href="https://chalkandroots.com" style="color:#6B4C3B">chalkandroots.com</a>
+      </p>
+      <div style="text-align:center;margin-top:20px">
+        <a href="https://ko-fi.com/chalkandroots/shop" style="display:inline-block;background:#4A3428;color:#fff;font-weight:800;padding:12px 22px;border-radius:999px;text-decoration:none">☕ Browse more resources on Ko-fi &#8594;</a>
+      </div>
+    </div>`;
 
-    try {
-      const notifyRes = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "Chalk & Roots Standards Generator <noreply@chalkandroots.com>",
-          to: ["chalkandroots@gmail.com"],
-          reply_to: email,
-          subject: `Review: ${standard} plan for ${name}`,
-          html: bodyHtml,
-        }),
-      });
-      if (!notifyRes.ok) {
-        console.error("Failed to send approval-review email:", await notifyRes.text());
-      } else {
-        console.log("TRACE: review email sent successfully to chalkandroots@gmail.com");
-      }
-    } catch (err) {
-      console.error("Approval-review email failed:", err);
+  const fileSlug = (standard || "plan").replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+
+  try {
+    const sendRes = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Chalk & Roots <noreply@chalkandroots.com>",
+        reply_to: "chalkandroots@gmail.com",
+        to: [email],
+        subject: `Your ${standard} plan from Chalk & Roots`,
+        html: teacherHtml,
+        attachments: [
+          { filename: `${fileSlug}.pptx`, content: pptxBuffer.toString("base64") },
+          { filename: `${fileSlug}.pdf`, content: pdfBuffer.toString("base64") },
+        ],
+      }),
+    });
+
+    if (!sendRes.ok) {
+      console.error("Failed to email plan to teacher:", sendRes.status, await sendRes.text());
+      return { statusCode: 200, body: "Plan generated but email failed" };
     }
-  } else {
-    console.error("RESEND_API_KEY is not set — drafted plan but could not email it for review");
+    console.log("TRACE: plan emailed successfully to", email);
+  } catch (err) {
+    console.error("Send-to-teacher fetch failed:", err);
+    return { statusCode: 200, body: "Plan generated but email failed" };
   }
 
   return { statusCode: 200, body: "standards-generator handled" };

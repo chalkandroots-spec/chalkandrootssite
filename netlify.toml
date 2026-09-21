@@ -5,3 +5,15 @@
 [functions."daily-digest"]
   # 12:00 UTC = 8:00am US Eastern (EDT); shifts to 7:00am once EST resumes in Nov
   schedule = "0 12 * * *"
+
+[functions."submission-created"]
+  # Netlify Functions deploy as a bundle separate from the published site, so
+  # the top-level assets/ folder isn't there by default. The Standards
+  # Generator's plan-documents.js embeds these two images (avatar + emblem)
+  # into the generated .pptx/.pdf, so they must be explicitly included here
+  # or every plan-generation request fails with ENOENT before ever emailing
+  # the teacher.
+  included_files = [
+    "assets/angella-avatar-illustration.jpg",
+    "assets/chalk-roots-emblem.png",
+  ]

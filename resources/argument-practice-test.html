@@ -264,6 +264,24 @@
     margin:0 auto;
   }
 
+
+  /* ---- Voice stimulus (avatar + audio) ---- */
+  .voice-card{
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    padding:18px 20px;border-radius:14px;
+    background:linear-gradient(180deg,var(--sage-pale),#fff);
+    border:1.5px solid var(--sage);
+  }
+  .voice-avatar{
+    width:96px;height:96px;border-radius:50%;object-fit:cover;flex:none;
+    border:3px solid var(--card);box-shadow:0 0 0 2px var(--sage),0 8px 18px rgba(74,52,40,0.18);
+  }
+  .voice-body{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:6px;}
+  .voice-name{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:16px;color:var(--brown);}
+  .voice-label{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--sage-dark);}
+  .voice-player{width:100%;margin-top:4px;}
+  @media print{.voice-player{display:none;}}
+
   /* ---- Video player placeholder ---- */
   .video-card{
     border-radius:12px;
@@ -551,11 +569,11 @@
       </div>
     </div>
     <div class="directions">
-      <p>On this test, you will read/view <b>THREE stimuli</b> about the same topic. Real tests almost never give you just one source &mdash; they mix formats on purpose. Here&rsquo;s how to handle each type:</p>
+      <p>On this test, you will read or listen to <b>THREE stimuli</b> about the same topic. Real tests almost never give you just one source &mdash; they mix formats on purpose. Here&rsquo;s how to handle each type:</p>
       <ol>
         <li><b>Print passage</b> &mdash; Read it like an article. Underline or jot down any fact, statistic, or expert statement you might use as evidence.</li>
         <li><b>Graph/chart</b> &mdash; Don&rsquo;t skip this because it &ldquo;isn&rsquo;t words.&rdquo; Read the title, the labels on each axis, and the numbers first. A graph is evidence too &mdash; one specific number from it is often stronger than a whole paragraph of opinion.</li>
-        <li><b>Video / transcript</b> &mdash; Whether you watch it or read the transcript, treat it the same as a print passage: find the speaker&rsquo;s main claim and one specific detail they give to support it.</li>
+        <li><b>Audio / transcript</b> &mdash; Whether you listen to it or read the transcript, treat it the same as a print passage: find the speaker&rsquo;s main claim and one specific detail they give to support it.</li>
       </ol>
       <p style="margin-top:14px;">You do not have to use all three stimuli, but a strong response usually pulls evidence from at least <b>TWO</b> different ones.</p>
     </div>
@@ -650,30 +668,31 @@
     <div class="section">
       <div class="section-head">
         <span class="section-num">4</span>
-        <h2>Stimulus 3 &mdash; Video Transcript</h2>
+        <h2>Stimulus 3 &mdash; Audio &amp; Transcript</h2>
       </div>
     </div>
     <div class="stimulus">
       <div class="stimulus-head">
         <span class="stimulus-num">Stimulus 3</span>
-        <span class="type-pill">Video / Transcript</span>
+        <span class="type-pill">Audio / Transcript</span>
       </div>
       <div class="stimulus-body">
         <h3>&ldquo;60-Second Classroom Snapshot&rdquo;</h3>
-        <div class="video-card" style="overflow:hidden;">
-          <iframe src="https://drive.google.com/file/d/1C3XuTor5DC8_VCzlfsv3jFgg0UZUMo69/preview" width="100%" height="360" style="border:none;display:block;" allow="autoplay" allowfullscreen title="Chalk & Roots classroom video stimulus"></iframe>
-          <div class="video-caption-bar">Live clip &mdash; transcript below is provisional and will be updated to match the final cut</div>
+        <div class="voice-card">
+          <img class="voice-avatar" src="/assets/angella-avatar-illustration.jpg" alt="Illustrated avatar of Angella, a Chalk &amp; Roots teacher">
+          <div class="voice-body">
+            <div class="voice-name">Angella &middot; Classroom Teacher</div>
+            <div class="voice-label">Listen to the stimulus</div>
+            <audio class="voice-player" controls preload="metadata" src="/assets/audio/stimulus-3-voice.mp3">Your browser can't play this audio. Read the transcript below instead.</audio>
+          </div>
         </div>
         <div class="transcript">
           <span class="t-label">Transcript</span>
-          <p class="scene">[Video opens on a 4th-grade classroom. A teacher speaks to camera.]</p>
-          <div class="line">
+                    <div class="line">
             <span class="speaker">TEACHER:</span>
             <p class="quote">&ldquo;I was skeptical at first, I&rsquo;ll be honest. But watching a student who used to hate math practice ask ME for five more problems because the app finally gave her ones at her level? That changed my mind. It&rsquo;s not replacing me. I&rsquo;m still the one deciding what she needs next. It just does the recalculating faster than I can.&rdquo;</p>
           </div>
-          <p class="scene" style="margin-bottom:0;">[Video ends on the student working independently at a tablet.]</p>
         </div>
-        <p class="swap-note">This is the working clip &mdash; swap it for the final edited version whenever it&rsquo;s ready, and update the transcript above to match exactly what&rsquo;s said.</p>
       </div>
     </div>
 

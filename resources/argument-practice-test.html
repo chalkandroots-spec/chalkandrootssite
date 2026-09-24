@@ -1,0 +1,776 @@
+<!doctype html><html lang="en"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Argumentative Writing Practice Test · Chalk &amp; Roots</title><meta name="robots" content="noindex, nofollow"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-180.png"></head><body>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF7F2;
+    --card:#FFFDF8;
+    --sage:#7A9B7A;
+    --sage-dark:#5C7A5C;
+    --sage-pale:#E7EEE3;
+    --brown:#4A3428;
+    --brown-soft:#6B4C3B;
+    --terra:#C4714A;
+    --terra-pale:#F3DDCE;
+    --muted:#7A716A;
+    --gold:#C9A227;
+    --page-bg:#EFE9DE;
+    --rule:#E7DFCF;
+  }
+  *{box-sizing:border-box;}
+  html{background:var(--page-bg);}
+  body{
+    margin:0;
+    background:var(--page-bg);
+    font-family:'Nunito',Arial,sans-serif;
+    color:var(--brown);
+    padding:clamp(20px,5vw,48px) 16px 64px;
+    line-height:1.65;
+  }
+
+  .wrap{max-width:760px;margin:0 auto;}
+
+  .leaf-border{
+    height:16px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='18'%3E%3Cpath d='M4 9 C4 4 10 2 14 2 C18 2 20 6 20 9 C20 12 18 16 14 16 C10 16 4 14 4 9 Z' fill='%237A9B7A'/%3E%3Cpath d='M4 9 L20 9' stroke='%23FAF7F2' stroke-width='0.7'/%3E%3C/svg%3E");
+    background-repeat:repeat-x;
+    background-size:36px 16px;
+    background-position:center;
+    background-color:var(--sage);
+    border-radius:14px 14px 0 0;
+  }
+  .leaf-border.bottom{border-radius:0 0 14px 14px;}
+
+  .card{
+    background:var(--card);
+    box-shadow:0 18px 44px rgba(74,52,40,0.14);
+  }
+
+  /* ---- Prominent title box ---- */
+  .title-box{
+    margin:26px 24px 0;
+    padding:26px 22px;
+    background:linear-gradient(180deg,var(--sage-pale),#fff);
+    border:3px solid var(--brown);
+    border-radius:16px;
+    text-align:center;
+    box-shadow:0 6px 0 var(--terra);
+  }
+  .title-box .kicker{
+    font-family:'Nunito',Arial,sans-serif;
+    font-weight:800;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-size:12px;
+    color:var(--terra);
+    margin-bottom:8px;
+  }
+  .title-box h1{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:800;
+    font-size:clamp(22px,5.4vw,32px);
+    line-height:1.22;
+    color:var(--brown);
+    margin:0;
+    text-transform:uppercase;
+    letter-spacing:.01em;
+    text-wrap:balance;
+  }
+  .title-box .amp{color:var(--sage-dark);}
+
+  .meta-row{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:16px 24px 0;
+    padding:14px 18px;
+    background:var(--cream);
+    border:1px solid var(--rule);
+    border-radius:12px;
+  }
+  .meta-item{font-size:13px;color:var(--brown-soft);}
+  .meta-item b{color:var(--brown);font-weight:800;}
+  .meta-dot{width:4px;height:4px;border-radius:50%;background:var(--terra);flex:none;}
+
+  .companion{
+    margin:14px 34px 0;
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .companion a{color:var(--sage-dark);font-weight:700;text-decoration:none;border-bottom:1px dotted var(--sage);}
+  .companion a:hover{color:var(--terra);border-color:var(--terra);}
+
+  .wordmark-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin:22px 24px 0;
+    padding-top:18px;
+    border-top:1px solid var(--rule);
+  }
+  .wordmark-row .wordmark{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:700;
+    font-size:15px;
+    color:var(--brown);
+  }
+  .wordmark-row .tagline{
+    font-style:italic;
+    font-size:11.5px;
+    color:var(--sage-dark);
+  }
+
+  /* ---- Section headers ---- */
+  .section{padding:26px 34px 4px;}
+  .section-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .section-num{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:800;
+    font-size:13px;
+    color:#fff;
+    background:var(--sage-dark);
+    width:26px;height:26px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .section-head h2{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:700;
+    font-size:19px;
+    color:var(--brown);
+    margin:0;
+  }
+
+  .directions{
+    margin:0 34px 6px;
+    padding:20px 22px;
+    background:var(--terra-pale);
+    border:1.5px dashed var(--terra);
+    border-radius:14px;
+  }
+  .directions p{margin:0 0 12px;font-size:14px;color:var(--brown-soft);}
+  .directions p:last-child{margin-bottom:0;}
+  .directions ol{margin:0;padding-left:0;list-style:none;counter-reset:steps;}
+  .directions li{
+    counter-increment:steps;
+    margin-bottom:12px;
+    padding-left:34px;
+    position:relative;
+    font-size:14px;
+    color:var(--brown-soft);
+  }
+  .directions li:last-child{margin-bottom:0;}
+  .directions li::before{
+    content:counter(steps);
+    position:absolute;left:0;top:0;
+    width:24px;height:24px;
+    background:var(--terra);
+    color:#fff;
+    border-radius:50%;
+    font-weight:800;
+    font-size:12.5px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .directions li b{color:var(--brown);}
+
+  .stimulus{
+    margin:0 24px 22px;
+    background:#fff;
+    border:1px solid var(--rule);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .stimulus-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 20px;
+    background:var(--sage-pale);
+    flex-wrap:wrap;
+  }
+  .stimulus-num{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:700;
+    font-size:12.5px;
+    color:var(--sage-dark);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+  }
+  .type-pill{
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    padding:4px 11px;
+    border-radius:999px;
+    background:var(--terra);
+    color:#fff;
+  }
+  .stimulus-body{padding:20px 22px;}
+  .stimulus-body h3{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:18px;
+    color:var(--brown);
+    margin:0 0 10px;
+  }
+  .stimulus-body p{
+    font-size:14.5px;
+    color:var(--brown-soft);
+    margin:0 0 12px;
+    max-width:64ch;
+  }
+  .stimulus-body p:last-child{margin-bottom:0;}
+
+  /* ---- Placeholder blocks (graph + video) ---- */
+  .placeholder{
+    border:2px dashed #C9BCA0;
+    border-radius:12px;
+    background:repeating-linear-gradient(135deg,#FBF8F1,#FBF8F1 10px,#F5EFE1 10px,#F5EFE1 20px);
+    padding:26px 20px;
+    text-align:center;
+  }
+  .placeholder .ph-icon{
+    width:46px;height:46px;
+    margin:0 auto 12px;
+    border-radius:50%;
+    background:#fff;
+    border:1.5px solid var(--sage);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--sage-dark);
+  }
+  .placeholder .ph-label{
+    font-weight:800;
+    font-size:12.5px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--sage-dark);
+    margin-bottom:6px;
+  }
+  .placeholder .ph-note{
+    font-size:13px;
+    color:var(--muted);
+    max-width:44ch;
+    margin:0 auto;
+  }
+
+  /* ---- Video player placeholder ---- */
+  .video-card{
+    border-radius:12px;
+    overflow:hidden;
+    background:var(--brown);
+    box-shadow:0 10px 26px rgba(74,52,40,0.22);
+  }
+  .video-frame{
+    position:relative;
+    aspect-ratio:16/9;
+    background:
+      radial-gradient(ellipse at 30% 20%,rgba(122,155,122,0.35),transparent 55%),
+      linear-gradient(160deg,#3A2A20,#241A14 70%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .video-frame .play-btn{
+    width:64px;height:64px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.94);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 8px 20px rgba(0,0,0,0.35);
+  }
+  .video-frame .play-btn svg{margin-left:4px;}
+  .video-frame .video-tag{
+    position:absolute;
+    top:12px;left:12px;
+    font-size:10.5px;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#fff;
+    background:rgba(0,0,0,0.4);
+    padding:4px 10px;
+    border-radius:999px;
+  }
+  .video-frame .video-len{
+    position:absolute;
+    bottom:12px;right:12px;
+    font-size:11px;
+    font-weight:700;
+    color:#fff;
+    background:rgba(0,0,0,0.55);
+    padding:3px 8px;
+    border-radius:6px;
+    font-variant-numeric:tabular-nums;
+  }
+  .video-caption-bar{
+    padding:12px 18px;
+    background:#2E211A;
+    color:#EFE6D8;
+    font-size:12.5px;
+    text-align:center;
+  }
+  .transcript{
+    margin-top:16px;
+    padding:18px 20px;
+    background:var(--cream);
+    border-radius:10px;
+    border:1px solid var(--rule);
+  }
+  .transcript .t-label{
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    font-size:11px;
+    font-weight:800;
+    color:var(--sage-dark);
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .transcript .scene{
+    font-style:italic;
+    color:var(--muted);
+    font-size:13.5px;
+    margin:0 0 10px;
+  }
+  .transcript .line{
+    display:flex;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .transcript .speaker{
+    font-weight:800;
+    color:var(--terra);
+    font-size:13px;
+    flex:none;
+    white-space:nowrap;
+  }
+  .transcript .quote{
+    font-size:14px;
+    color:var(--brown);
+    margin:0;
+  }
+  .swap-note{
+    margin-top:14px;
+    font-size:12.5px;
+    color:var(--muted);
+    text-align:center;
+  }
+
+  .prompt-block{
+    margin:0 24px 22px;
+    padding:24px 24px;
+    background:linear-gradient(180deg,var(--sage-pale),#fff);
+    border:1.5px solid var(--sage);
+    border-radius:14px;
+    text-align:center;
+  }
+  .prompt-block .eyebrow{
+    display:inline-block;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    font-size:11px;
+    font-weight:800;
+    color:var(--sage-dark);
+    background:#fff;
+    padding:5px 14px;
+    border-radius:999px;
+    margin-bottom:12px;
+    border:1px solid var(--sage);
+  }
+  .prompt-block h3{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:21px;
+    color:var(--brown);
+    margin:0 0 12px;
+    text-wrap:balance;
+  }
+  .prompt-block p{
+    font-size:14.5px;
+    color:var(--brown-soft);
+    margin:0 auto 14px;
+    max-width:56ch;
+  }
+  .organizer-link{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-weight:800;
+    font-size:13.5px;
+    color:#fff;
+    background:var(--terra);
+    padding:11px 20px;
+    border-radius:999px;
+    text-decoration:none;
+  }
+  .organizer-link:hover{background:#B4623C;}
+
+  .rubric{margin:0 24px 8px;}
+  .rubric-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  @media (max-width:560px){.rubric-grid{grid-template-columns:1fr;}}
+  .rubric-cat{
+    background:#fff;
+    border:1px solid var(--rule);
+    border-radius:12px;
+    padding:16px 18px;
+  }
+  .rubric-cat h4{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:14.5px;
+    color:var(--sage-dark);
+    margin:0 0 8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .rubric-cat h4 .n{
+    font-size:11px;
+    font-weight:800;
+    color:#fff;
+    background:var(--sage);
+    width:20px;height:20px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .rubric-cat ul{margin:0;padding-left:18px;}
+  .rubric-cat li{font-size:12.5px;color:var(--brown-soft);margin-bottom:6px;line-height:1.5;}
+  .rubric-cat li:last-child{margin-bottom:0;}
+  .rubric-source{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--muted);
+    margin:14px 0 4px;
+    font-style:italic;
+  }
+
+  .levels{
+    margin:18px 0 0;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+  }
+  @media (max-width:560px){.levels{grid-template-columns:1fr;}}
+  .level{
+    border-radius:12px;
+    padding:16px 16px;
+    border:1.5px solid;
+  }
+  .level.high{background:var(--sage-pale);border-color:var(--sage);}
+  .level.mid{background:var(--terra-pale);border-color:var(--terra);}
+  .level.low{background:#F3E5E3;border-color:#C46A5E;}
+  .level .lvl-name{
+    font-weight:800;
+    font-size:12.5px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    margin-bottom:6px;
+  }
+  .level.high .lvl-name{color:var(--sage-dark);}
+  .level.mid .lvl-name{color:#A85A36;}
+  .level.low .lvl-name{color:#A5453A;}
+  .level p{font-size:12.5px;color:var(--brown-soft);margin:0;line-height:1.55;}
+
+  .divider{height:1px;background:var(--rule);margin:26px 34px 0;}
+
+  .footer{
+    text-align:center;
+    padding:22px 24px 30px;
+    font-size:13px;
+    color:var(--brown-soft);
+  }
+  .footer .tagline2{
+    font-family:'Playfair Display',Georgia,serif;
+    font-style:italic;
+    color:var(--sage-dark);
+    font-size:14.5px;
+    margin:0 0 10px;
+  }
+  .footer .name{font-weight:800;color:var(--brown);}
+
+  @media print{
+    body{background:#fff;padding:0;}
+    .card{box-shadow:none;}
+    .stimulus{break-inside:avoid;}
+    .prompt-block,.rubric{break-inside:avoid;}
+  }
+
+  @media (max-width:480px){
+    .section,.title-box,.directions,.stimulus,.prompt-block,.rubric{padding-left:16px;padding-right:16px;margin-left:14px;margin-right:14px;}
+    .meta-row,.companion,.wordmark-row,.divider{margin-left:14px;margin-right:14px;}
+  }
+</style>
+
+<div class="wrap">
+  <div class="leaf-border"></div>
+  <div class="card">
+
+    <!-- PROMINENT TITLE BOX -->
+    <div class="title-box">
+      <div class="kicker">Argumentative Writing &middot; Standard W.1 &middot; Grades 5&ndash;8</div>
+      <h1>Chalk <span class="amp">&amp;</span> Roots — Argumentative Writing Practice Test Model</h1>
+    </div>
+
+    <div class="meta-row">
+      <span class="meta-item"><b>Standard:</b> W.1</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item"><b>Grades:</b> 5&ndash;8</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item"><b>Format:</b> 3 stimuli + essay</span>
+    </div>
+
+    <div class="companion">
+      Companion to: <a href="https://docs.google.com/document/u/0/d/1K5-97bIrWQAawqQPJPhSBYzwx-tHAbDTTJqLVZKrD6U/edit">Argumentative Essay Graphic Organizer / Model</a> &mdash; Argumentative Essay (&ldquo;Should AI Be Used in Elementary Schools?&rdquo;)
+    </div>
+
+    <div class="wordmark-row">
+      <span class="wordmark">Chalk &amp; Roots</span>
+      <span class="meta-dot"></span>
+      <span class="tagline">Rooted in Tradition. Growing Through Innovation.</span>
+    </div>
+
+    <!-- STUDENT DIRECTIONS -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">1</span>
+        <h2>Directions for Students</h2>
+      </div>
+    </div>
+    <div class="directions">
+      <p>On this test, you will read/view <b>THREE stimuli</b> about the same topic. Real tests almost never give you just one source &mdash; they mix formats on purpose. Here&rsquo;s how to handle each type:</p>
+      <ol>
+        <li><b>Print passage</b> &mdash; Read it like an article. Underline or jot down any fact, statistic, or expert statement you might use as evidence.</li>
+        <li><b>Graph/chart</b> &mdash; Don&rsquo;t skip this because it &ldquo;isn&rsquo;t words.&rdquo; Read the title, the labels on each axis, and the numbers first. A graph is evidence too &mdash; one specific number from it is often stronger than a whole paragraph of opinion.</li>
+        <li><b>Video / transcript</b> &mdash; Whether you watch it or read the transcript, treat it the same as a print passage: find the speaker&rsquo;s main claim and one specific detail they give to support it.</li>
+      </ol>
+      <p style="margin-top:14px;">You do not have to use all three stimuli, but a strong response usually pulls evidence from at least <b>TWO</b> different ones.</p>
+    </div>
+
+    <!-- STIMULUS 1 -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">2</span>
+        <h2>Stimulus 1 &mdash; Print Passage</h2>
+      </div>
+    </div>
+    <div class="stimulus">
+      <div class="stimulus-head">
+        <span class="stimulus-num">Stimulus 1</span>
+        <span class="type-pill">Print Passage</span>
+      </div>
+      <div class="stimulus-body">
+        <h3>AI Tools Enter the Elementary Classroom</h3>
+        <p>Across the country, elementary teachers are testing AI-powered reading and math programs that adjust each problem&rsquo;s difficulty to the student answering it. Supporters say the technology gives teachers real-time data they used to have to gather by hand, freeing up time for small-group instruction.</p>
+        <p>Critics point out that not every school can afford the software or the training teachers need to use it well, and some worry students will lean on the tool instead of building their own reasoning skills. Districts that have piloted these programs report mixed early results: some schools saw reading scores rise within a semester, while others saw little change and pointed to inconsistent internet access as a likely cause.</p>
+      </div>
+    </div>
+
+    <!-- STIMULUS 2 -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">3</span>
+        <h2>Stimulus 2 &mdash; Graph / Chart</h2>
+      </div>
+    </div>
+    <div class="stimulus">
+      <div class="stimulus-head">
+        <span class="stimulus-num">Stimulus 2</span>
+        <span class="type-pill">Graph / Chart</span>
+      </div>
+      <div class="stimulus-body">
+        <h3 style="margin:0 0 4px;font-family:'Playfair Display',Georgia,serif;font-size:16px;color:var(--brown);">Reading Scores Before &amp; After One Semester of AI-Pilot Use</h3>
+        <p style="margin:0 0 14px;font-size:12.5px;color:var(--brown-soft);">Average grade-level reading score, five pilot districts (source: composite district reporting)</p>
+        <svg viewBox="0 0 640 300" width="100%" height="auto" role="img" aria-label="Bar chart comparing average reading scores before and after one semester of AI-pilot use across five districts">
+          <line x1="60" y1="20" x2="60" y2="240" stroke="var(--rule)" stroke-width="1.5"/>
+          <line x1="60" y1="240" x2="620" y2="240" stroke="var(--brown)" stroke-width="1.5"/>
+          <g font-family="Nunito, Arial, sans-serif" font-size="11" fill="var(--muted)">
+            <text x="52" y="44" text-anchor="end">100</text>
+            <text x="52" y="94" text-anchor="end">75</text>
+            <text x="52" y="144" text-anchor="end">50</text>
+            <text x="52" y="194" text-anchor="end">25</text>
+            <text x="52" y="240" text-anchor="end">0</text>
+          </g>
+          <g stroke="var(--rule)" stroke-width="1">
+            <line x1="60" y1="40" x2="620" y2="40"/>
+            <line x1="60" y1="90" x2="620" y2="90"/>
+            <line x1="60" y1="140" x2="620" y2="140"/>
+            <line x1="60" y1="190" x2="620" y2="190"/>
+          </g>
+
+          <!-- District A: internet access, strong rise -->
+          <rect x="92"  y="150" width="26" height="90" rx="3" fill="var(--terra-pale)"/>
+          <rect x="122" y="96"  width="26" height="144" rx="3" fill="var(--terra)"/>
+          <text x="122" y="256" text-anchor="middle" font-size="11.5" fill="var(--brown)" font-weight="700">District A</text>
+
+          <!-- District B: internet access, moderate rise -->
+          <rect x="192" y="140" width="26" height="100" rx="3" fill="var(--terra-pale)"/>
+          <rect x="222" y="106" width="26" height="134" rx="3" fill="var(--terra)"/>
+          <text x="222" y="256" text-anchor="middle" font-size="11.5" fill="var(--brown)" font-weight="700">District B</text>
+
+          <!-- District C: mixed access, slight rise -->
+          <rect x="292" y="146" width="26" height="94"  rx="3" fill="var(--terra-pale)"/>
+          <rect x="322" y="134" width="26" height="106" rx="3" fill="var(--terra)"/>
+          <text x="322" y="256" text-anchor="middle" font-size="11.5" fill="var(--brown)" font-weight="700">District C</text>
+
+          <!-- District D: inconsistent internet, flat -->
+          <rect x="392" y="148" width="26" height="92"  rx="3" fill="var(--sage-pale)"/>
+          <rect x="422" y="146" width="26" height="94"  rx="3" fill="var(--sage-dark)"/>
+          <text x="422" y="256" text-anchor="middle" font-size="11.5" fill="var(--brown)" font-weight="700">District D</text>
+
+          <!-- District E: inconsistent internet, slight dip -->
+          <rect x="492" y="142" width="26" height="98"  rx="3" fill="var(--sage-pale)"/>
+          <rect x="522" y="150" width="26" height="90"  rx="3" fill="var(--sage-dark)"/>
+          <text x="522" y="256" text-anchor="middle" font-size="11.5" fill="var(--brown)" font-weight="700">District E</text>
+
+          <!-- legend -->
+          <rect x="380" y="8" width="12" height="12" rx="2" fill="var(--terra-pale)"/>
+          <text x="396" y="18" font-size="11" fill="var(--brown-soft)" font-family="Nunito, Arial, sans-serif">Before pilot</text>
+          <rect x="480" y="8" width="12" height="12" rx="2" fill="var(--terra)"/>
+          <text x="496" y="18" font-size="11" fill="var(--brown-soft)" font-family="Nunito, Arial, sans-serif">After one semester</text>
+        </svg>
+        <p style="margin:12px 0 0;font-size:12px;color:var(--muted);font-style:italic;">Districts A&ndash;C had reliable school internet access; Districts D&ndash;E reported inconsistent access during the pilot.</p>
+      </div>
+    </div>
+
+    <!-- STIMULUS 3 -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">4</span>
+        <h2>Stimulus 3 &mdash; Video Transcript</h2>
+      </div>
+    </div>
+    <div class="stimulus">
+      <div class="stimulus-head">
+        <span class="stimulus-num">Stimulus 3</span>
+        <span class="type-pill">Video / Transcript</span>
+      </div>
+      <div class="stimulus-body">
+        <h3>&ldquo;60-Second Classroom Snapshot&rdquo;</h3>
+        <div class="video-card" style="overflow:hidden;">
+          <iframe src="https://drive.google.com/file/d/1W8lyO5kOYOCH3BhvzRP7ydxoeqq9MTKX/preview" width="100%" height="360" style="border:none;display:block;" allow="autoplay" allowfullscreen title="Chalk & Roots classroom video stimulus"></iframe>
+          <div class="video-caption-bar">Live clip &mdash; transcript below is provisional and will be updated to match the final cut</div>
+        </div>
+        <div class="transcript">
+          <span class="t-label">Transcript</span>
+          <p class="scene">[Video opens on a 4th-grade classroom. A teacher speaks to camera.]</p>
+          <div class="line">
+            <span class="speaker">TEACHER:</span>
+            <p class="quote">&ldquo;I was skeptical at first, I&rsquo;ll be honest. But watching a student who used to hate math practice ask ME for five more problems because the app finally gave her ones at her level? That changed my mind. It&rsquo;s not replacing me. I&rsquo;m still the one deciding what she needs next. It just does the recalculating faster than I can.&rdquo;</p>
+          </div>
+          <p class="scene" style="margin-bottom:0;">[Video ends on the student working independently at a tablet.]</p>
+        </div>
+        <p class="swap-note">This is the working clip &mdash; swap it for the final edited version whenever it&rsquo;s ready, and update the transcript above to match exactly what&rsquo;s said.</p>
+      </div>
+    </div>
+
+    <!-- WRITING PROMPT -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">5</span>
+        <h2>Writing Prompt</h2>
+      </div>
+    </div>
+    <div class="prompt-block">
+      <span class="eyebrow">Argumentative Essay</span>
+      <h3>Should elementary schools use AI tools in the classroom?</h3>
+      <p>Using evidence from at least <b>TWO</b> of the three stimuli above, write an argumentative essay that states a clear claim, supports it with reasons and evidence, addresses a counterclaim, and ends with a strong conclusion.</p>
+      <a class="organizer-link" href="https://docs.google.com/document/u/0/d/1K5-97bIrWQAawqQPJPhSBYzwx-tHAbDTTJqLVZKrD6U/edit">
+        Open the Graphic Organizer
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <!-- SCORING RUBRIC -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">6</span>
+        <h2>Scoring Rubric</h2>
+      </div>
+    </div>
+    <div class="rubric">
+      <div class="rubric-grid">
+        <div class="rubric-cat">
+          <h4><span class="n">1</span>Claim &amp; Argument Development</h4>
+          <ul>
+            <li>Clearly states a claim and maintains a precise argument throughout the essay.</li>
+            <li>Effectively addresses counterclaims or opposing viewpoints.</li>
+            <li>Demonstrates logical reasoning and insight in connecting evidence to the claim.</li>
+          </ul>
+        </div>
+        <div class="rubric-cat">
+          <h4><span class="n">2</span>Evidence &amp; Elaboration</h4>
+          <ul>
+            <li>Uses relevant and sufficient evidence from provided stimuli to support claims.</li>
+            <li>Explains and elaborates on evidence, showing clear understanding of the topic.</li>
+            <li>Integrates evidence to strengthen the argument and refute counterclaims.</li>
+          </ul>
+        </div>
+        <div class="rubric-cat">
+          <h4><span class="n">3</span>Organization &amp; Cohesion</h4>
+          <ul>
+            <li>Presents a cohesive structure with a clear introduction, body, and conclusion.</li>
+            <li>Uses effective transitions to clarify relationships among claims, reasons, and evidence.</li>
+            <li>Maintains a logical progression of ideas throughout the essay.</li>
+          </ul>
+        </div>
+        <div class="rubric-cat">
+          <h4><span class="n">4</span>Language &amp; Style</h4>
+          <ul>
+            <li>Demonstrates command of precise language and domain-specific vocabulary.</li>
+            <li>Maintains a formal style and objective tone appropriate for argumentative writing.</li>
+            <li>Uses varied sentence structures and sophisticated transitions.</li>
+          </ul>
+        </div>
+        <div class="rubric-cat" style="grid-column:1/-1;">
+          <h4><span class="n">5</span>Conventions</h4>
+          <ul>
+            <li>Exhibits correct grammar, punctuation, spelling, and mechanics.</li>
+            <li>Minor errors may be present but should not interfere with meaning.</li>
+            <li>High-scoring essays contain few or no errors.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="rubric-source">Key components adapted from a Tennessee-style argumentative essay rubric.</p>
+
+      <div class="levels">
+        <div class="level high">
+          <div class="lvl-name">High &mdash; Advanced/Proficient</div>
+          <p>Sophisticated argument, well-integrated evidence, clear reasoning, cohesive structure, precise language, minimal errors.</p>
+        </div>
+        <div class="level mid">
+          <div class="lvl-name">Mid &mdash; Basic/Developing</div>
+          <p>Adequate claim and evidence, some organizational or reasoning weaknesses, occasional errors in language or mechanics.</p>
+        </div>
+        <div class="level low">
+          <div class="lvl-name">Low &mdash; Below Basic</div>
+          <p>Weak or unclear claim, insufficient or irrelevant evidence, poor organization, frequent errors that interfere with meaning.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="footer">
+      <p class="tagline2">Rooted in tradition. Growing through innovation.</p>
+      <p>Warmly,<br><span class="name">Angella</span><br>Chalk &amp; Roots</p>
+    </div>
+
+  </div>
+  <div class="leaf-border bottom"></div>
+</div>
+
+</body></html>

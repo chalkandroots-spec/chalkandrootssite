@@ -1,0 +1,276 @@
+<!doctype html><html lang="en"><head><meta charset=utf8><meta name="viewport" content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>5-Minute AI Lesson Plan Prompt Kit · Chalk &amp; Roots</title><meta name="robots" content="noindex, nofollow"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-180.png"></head><body>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF7F2;
+    --card:#FFFDF8;
+    --sage:#7A9B7A;
+    --sage-dark:#5C7A5C;
+    --sage-pale:#E7EEE3;
+    --brown:#4A3428;
+    --brown-soft:#6B4C3B;
+    --terra:#C4714A;
+    --terra-pale:#F3DDCE;
+    --muted:#7A716A;
+    --gold:#C9A227;
+    --page-bg:#EFE9DE;
+    --rule:#E7DFCF;
+  }
+  *{box-sizing:border-box;}
+  html{background:var(--page-bg);}
+  body{
+    margin:0;
+    background:var(--page-bg);
+    font-family:'Nunito',Arial,sans-serif;
+    color:var(--brown);
+    padding:clamp(20px,5vw,48px) 16px 64px;
+    line-height:1.65;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+  .leaf-border{
+    height:16px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='18'%3E%3Cpath d='M4 9 C4 4 10 2 14 2 C18 2 20 6 20 9 C20 12 18 16 14 16 C10 16 4 14 4 9 Z' fill='%237A9B7A'/%3E%3Cpath d='M4 9 L20 9' stroke='%23FAF7F2' stroke-width='0.7'/%3E%3C/svg%3E");
+    background-repeat:repeat-x;
+    background-size:36px 16px;
+    background-position:center;
+    background-color:var(--sage);
+    border-radius:14px 14px 0 0;
+  }
+  .leaf-border.bottom{border-radius:0 0 14px 14px;}
+  .card{background:var(--card);box-shadow:0 18px 44px rgba(74,52,40,0.14);}
+
+  .title-box{
+    margin:26px 24px 0;
+    padding:26px 22px;
+    background:linear-gradient(180deg,var(--sage-pale),#fff);
+    border:3px solid var(--brown);
+    border-radius:16px;
+    text-align:center;
+    box-shadow:0 6px 0 var(--terra);
+  }
+  .title-box .kicker{
+    font-family:'Nunito',Arial,sans-serif;
+    font-weight:800;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-size:12px;
+    color:var(--terra);
+    margin-bottom:8px;
+  }
+  .title-box h1{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:800;
+    font-size:clamp(22px,5.4vw,32px);
+    line-height:1.22;
+    color:var(--brown);
+    margin:0;
+    text-wrap:balance;
+  }
+  .title-box .amp{color:var(--sage-dark);}
+
+  .meta-row{
+    display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;
+    margin:16px 24px 0;padding:14px 18px;
+    background:var(--cream);border:1px solid var(--rule);border-radius:12px;
+  }
+  .meta-item{font-size:13px;color:var(--brown-soft);}
+  .meta-item b{color:var(--brown);font-weight:800;}
+  .meta-dot{width:4px;height:4px;border-radius:50%;background:var(--terra);flex:none;}
+
+  .wordmark-row{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    margin:22px 24px 0;padding-top:18px;border-top:1px solid var(--rule);
+  }
+  .wordmark-row .wordmark{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:15px;color:var(--brown);}
+  .wordmark-row .tagline{font-style:italic;font-size:11.5px;color:var(--sage-dark);}
+
+  .section{padding:26px 34px 4px;}
+  .section-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .section-num{
+    font-family:'Playfair Display',Georgia,serif;font-weight:800;font-size:13px;color:#fff;
+    background:var(--sage-dark);width:26px;height:26px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .section-head h2{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:19px;color:var(--brown);margin:0;}
+
+  .directions{
+    margin:0 34px 6px;padding:20px 22px;
+    background:var(--terra-pale);border:1.5px dashed var(--terra);border-radius:14px;
+  }
+  .directions p{margin:0 0 12px;font-size:14px;color:var(--brown-soft);}
+  .directions p:last-child{margin-bottom:0;}
+  .directions ol{margin:0;padding-left:0;list-style:none;counter-reset:steps;}
+  .directions li{
+    counter-increment:steps;margin-bottom:12px;padding-left:34px;position:relative;
+    font-size:14px;color:var(--brown-soft);
+  }
+  .directions li:last-child{margin-bottom:0;}
+  .directions li::before{
+    content:counter(steps);position:absolute;left:0;top:0;width:24px;height:24px;
+    background:var(--terra);color:#fff;border-radius:50%;font-weight:800;font-size:12.5px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .directions li b{color:var(--brown);}
+
+  .prompt-card{
+    margin:0 24px 20px;background:#fff;border:1px solid var(--rule);border-radius:14px;overflow:hidden;
+  }
+  .prompt-head{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 20px;background:var(--sage-pale);flex-wrap:wrap;
+  }
+  .prompt-num{
+    font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:12.5px;
+    color:var(--sage-dark);text-transform:uppercase;letter-spacing:.08em;
+  }
+  .use-pill{
+    font-size:11px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;
+    padding:4px 11px;border-radius:999px;background:var(--terra);color:#fff;
+  }
+  .prompt-body{padding:20px 22px;}
+  .prompt-body h3{font-family:'Playfair Display',Georgia,serif;font-size:17px;color:var(--brown);margin:0 0 12px;}
+  .prompt-text{
+    font-size:14px;color:var(--brown);background:var(--cream);border:1px dashed var(--rule);
+    border-radius:10px;padding:14px 16px;margin:0 0 12px;line-height:1.6;
+  }
+  .prompt-text b{color:var(--terra);}
+  .prompt-body p.use-note{font-size:13px;color:var(--muted);font-style:italic;margin:0;}
+
+  .divider{height:1px;background:var(--rule);margin:26px 34px 0;}
+
+  .footer{text-align:center;padding:22px 24px 30px;font-size:13px;color:var(--brown-soft);}
+  .footer .tagline2{font-family:'Playfair Display',Georgia,serif;font-style:italic;color:var(--sage-dark);font-size:14.5px;margin:0 0 10px;}
+  .footer .name{font-weight:800;color:var(--brown);}
+
+  @media print{
+    body{background:#fff;padding:0;}
+    .card{box-shadow:none;}
+    .prompt-card{break-inside:avoid;}
+    .directions{break-inside:avoid;}
+  }
+  @media (max-width:480px){
+    .section,.title-box,.directions,.prompt-card{padding-left:16px;padding-right:16px;margin-left:14px;margin-right:14px;}
+    .meta-row,.wordmark-row,.divider{margin-left:14px;margin-right:14px;}
+  }
+</style>
+
+<div class="wrap">
+  <div class="leaf-border"></div>
+  <div class="card">
+
+    <div class="title-box">
+      <div class="kicker">AI-Assisted Planning &middot; Any Grade &middot; Any Subject</div>
+      <h1>Chalk <span class="amp">&amp;</span> Roots — 5-Minute AI Lesson Plan Prompt Kit</h1>
+    </div>
+
+    <div class="meta-row">
+      <span class="meta-item"><b>Format:</b> 5 copy-paste prompts</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item"><b>Works with:</b> ChatGPT, Claude, Gemini</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item"><b>Time saved:</b> ~5 minutes per plan</span>
+    </div>
+
+    <div class="wordmark-row">
+      <span class="wordmark">Chalk &amp; Roots</span>
+      <span class="meta-dot"></span>
+      <span class="tagline">Rooted in Tradition. Growing Through Innovation.</span>
+    </div>
+
+    <!-- HOW TO USE -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">1</span>
+        <h2>How to Use This Kit</h2>
+      </div>
+    </div>
+    <div class="directions">
+      <ol>
+        <li><b>Pick the prompt below</b> that matches what you need today: a full lesson, a hook, ELD support, a standards check, or an exit ticket.</li>
+        <li><b>Copy the prompt</b> into your AI tool of choice (ChatGPT, Claude, or Gemini all work).</li>
+        <li><b>Fill in the bracketed [placeholders]</b> with your grade, subject, and skill.</li>
+        <li><b>Read the output and adjust it</b> for your students. AI drafts. You teach.</li>
+        <li><b>Save your favorite versions</b> so next time takes even less than 5 minutes.</li>
+      </ol>
+    </div>
+
+    <!-- PROMPTS -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-num">2</span>
+        <h2>The 5 Prompts</h2>
+      </div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-head">
+        <span class="prompt-num">Prompt 1</span>
+        <span class="use-pill">Full Lesson</span>
+      </div>
+      <div class="prompt-body">
+        <h3>The Core Lesson Plan Builder</h3>
+        <p class="prompt-text">Build a <b>[length]</b>-minute <b>[grade]</b> <b>[subject]</b> lesson on <b>[skill]</b>. Include a Science of Reading&ndash;aligned mini-lesson, a small group activity for ELD students, and an exit ticket.</p>
+        <p class="use-note">Use this when you need a full lesson from scratch, fast.</p>
+      </div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-head">
+        <span class="prompt-num">Prompt 2</span>
+        <span class="use-pill">Opening Hook</span>
+      </div>
+      <div class="prompt-body">
+        <h3>The Garden-Based Hook</h3>
+        <p class="prompt-text">Write a 3-minute garden-based or hands-on hook to open a lesson on <b>[skill]</b> for <b>[grade]</b> students. Tie it to something they can touch, grow, or observe.</p>
+        <p class="use-note">Use this when your opening needs more energy than a warm-up slide.</p>
+      </div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-head">
+        <span class="prompt-num">Prompt 3</span>
+        <span class="use-pill">ELD Support</span>
+      </div>
+      <div class="prompt-body">
+        <h3>The ELD Small Group Support</h3>
+        <p class="prompt-text">Design a 10-minute small group activity that supports ELD students practicing <b>[skill]</b> in <b>[grade]</b> <b>[subject]</b>. Include sentence frames and one visual support.</p>
+        <p class="use-note">Use this when your ELD students need more scaffolding than the whole-group lesson gives them.</p>
+      </div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-head">
+        <span class="prompt-num">Prompt 4</span>
+        <span class="use-pill">Standards Check</span>
+      </div>
+      <div class="prompt-body">
+        <h3>The Standards Alignment Check</h3>
+        <p class="prompt-text">Check this lesson plan against the <b>[state/Common Core]</b> standard for <b>[skill]</b> in <b>[grade]</b>. List what's missing and suggest one fix for each gap.</p>
+        <p class="use-note">Use this when you already have a lesson and just need a second set of eyes on alignment.</p>
+      </div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-head">
+        <span class="prompt-num">Prompt 5</span>
+        <span class="use-pill">Exit Ticket</span>
+      </div>
+      <div class="prompt-body">
+        <h3>The Exit Ticket Generator</h3>
+        <p class="prompt-text">Write a 3-question exit ticket that checks understanding of <b>[skill]</b> for <b>[grade]</b> students. Include one recall question, one application question, and one short-answer question.</p>
+        <p class="use-note">Use this when class is ending in 5 minutes and you still need a quick check.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="footer">
+      <p class="tagline2">Rooted in Tradition. Growing Through Innovation.</p>
+      <div class="name">Angella Barngrover</div>
+      <div>@meetchalkyroots &middot; chalkandroots@gmail.com &middot; chalkandroots.com</div>
+    </div>
+
+  </div>
+  <div class="leaf-border bottom"></div>
+</div>
+</body></html>

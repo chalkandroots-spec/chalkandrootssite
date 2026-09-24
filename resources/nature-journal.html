@@ -1,0 +1,563 @@
+<!doctype html><html lang="en"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style><title>The Nature Journal · Chalk &amp; Roots</title><meta name="robots" content="noindex, nofollow"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-180.png"></head><body>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Nunito:wght@400;600;700;800&display=swap');
+
+  :root{
+    --cream:#FAF7F2;
+    --card:#FFFDF8;
+    --sage:#7A9B7A;
+    --sage-dark:#5C7A5C;
+    --brown:#4A3428;
+    --brown-soft:#6B4C3B;
+    --terracotta:#C4714A;
+    --gold:#C9A227;
+    --hair:#E7DECF;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--cream);
+    color:var(--brown);
+    font-family:'Nunito',system-ui,sans-serif;
+    padding:48px 20px 80px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:56px;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+
+  h1,h2,h3{text-wrap:balance; margin:0; font-family:'Playfair Display',Georgia,serif;}
+
+  /* ---------- shareable promo card ---------- */
+  .card{
+    width:100%;
+    max-width:560px;
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:4px;
+    box-shadow:0 18px 44px -24px rgba(74,52,40,0.35);
+    overflow:hidden;
+  }
+
+  .leafline{
+    height:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    background:linear-gradient(180deg, rgba(122,155,122,0.14), transparent);
+  }
+  .leafline svg{width:16px;height:16px;flex:none;}
+  .leafline.bottom{transform:rotate(180deg);}
+
+  .card-inner{
+    padding:36px 40px 36px;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:20px;
+  }
+
+  .brandmark{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
+  .brandmark img{height:46px; width:auto;}
+  .wordmark{
+    font-family:'Nunito',sans-serif;
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:0.01em;
+    color:var(--sage-dark);
+  }
+
+  .badges{display:flex; gap:8px; flex-wrap:wrap; justify-content:center;}
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 16px;
+    border-radius:999px;
+    background:var(--terracotta);
+    color:#FFF9F2;
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:11.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  .badge.alt{
+    background:var(--cream);
+    color:var(--sage-dark);
+    border:1px solid var(--sage);
+  }
+
+  .title{
+    font-size:44px;
+    font-weight:700;
+    color:var(--brown);
+    line-height:1.08;
+  }
+  .title em{color:var(--sage-dark); font-style:italic;}
+
+  .sub{
+    max-width:38ch;
+    font-size:16px;
+    line-height:1.6;
+    color:var(--brown-soft);
+  }
+
+  .caption{
+    max-width:40ch;
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--brown-soft);
+    padding:14px 18px;
+    border-top:1px solid var(--hair);
+    border-bottom:1px solid var(--hair);
+  }
+
+  .cycle{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .chip{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 14px;
+    border-radius:999px;
+    border:1px solid var(--hair);
+    background:var(--cream);
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--sage-dark);
+  }
+  .chip .n{
+    width:16px;height:16px;border-radius:50%;
+    background:var(--sage);
+    color:#fff;
+    font-size:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Nunito',sans-serif;
+  }
+  .arrow{color:var(--hair); font-weight:700; align-self:center;}
+
+  .promo-box{
+    width:100%;
+    margin-top:4px;
+    border:1.5px dashed var(--terracotta);
+    border-radius:6px;
+    padding:20px 22px;
+    background:rgba(196,113,74,0.06);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    align-items:center;
+  }
+  .promo-box p{margin:0; font-size:14.5px; line-height:1.55; color:var(--brown-soft);}
+  .promo-box strong{color:var(--brown);}
+
+  .cta{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:11px 26px;
+    border-radius:999px;
+    background:var(--terracotta);
+    color:#FFF9F2;
+    font-weight:800;
+    font-size:14px;
+    letter-spacing:0.02em;
+    text-decoration:none;
+    box-shadow:0 10px 20px -10px rgba(196,113,74,0.55);
+  }
+
+  .tagline{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-size:13.5px;
+    color:var(--sage-dark);
+    letter-spacing:0.01em;
+  }
+
+  /* ---------- listing copy section ---------- */
+  .panel{
+    width:100%;
+    max-width:560px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .panel-label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--sage-dark);
+  }
+  .panel-label::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--hair);
+  }
+
+  .copy-card{
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:4px;
+    padding:30px 32px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .copy-card h2{font-size:22px; color:var(--brown); text-align:left;}
+  .copy-card p{margin:0; font-size:15px; line-height:1.7; color:var(--brown-soft);}
+  .copy-card .cycle-line{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding:14px 16px;
+    background:var(--cream);
+    border-left:3px solid var(--sage);
+    border-radius:2px;
+    font-size:14.5px;
+    color:var(--brown);
+  }
+  .copy-card .cycle-line b{color:var(--sage-dark);}
+  .copy-card .sign{
+    margin-top:4px;
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    color:var(--brown);
+  }
+
+  footer{
+    color:var(--brown-soft);
+    font-size:12.5px;
+    opacity:0.75;
+    text-align:center;
+  }
+
+  @media (max-width:480px){
+    .title{font-size:34px;}
+    .card-inner{padding:32px 24px 28px;}
+    .copy-card{padding:24px 22px;}
+  }
+
+  /* ---------- printable / fillable journal ---------- */
+  .print-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 22px;
+    border-radius:999px;
+    border:1.5px solid var(--sage-dark);
+    background:transparent;
+    color:var(--sage-dark);
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:13px;
+    letter-spacing:0.03em;
+    cursor:pointer;
+  }
+  .print-btn:hover{background:var(--sage-dark); color:#FFFDF8;}
+
+  .sheet{
+    width:100%;
+    max-width:680px;
+    aspect-ratio:8.5 / 11;
+    background:#fff;
+    border:1px solid var(--hair);
+    box-shadow:0 18px 44px -24px rgba(74,52,40,0.35);
+    padding:52px 48px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    color:var(--brown);
+  }
+  .sheet + .sheet{margin-top:8px;}
+
+  .field-line{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    font-size:13px;
+    color:var(--brown-soft);
+  }
+  .field-line input{
+    flex:1;
+    border:none;
+    border-bottom:1px solid var(--brown-soft);
+    background:transparent;
+    font-family:'Nunito',sans-serif;
+    font-size:15px;
+    color:var(--brown);
+    padding:2px 4px;
+  }
+  .field-line input:focus{outline:none; border-bottom-color:var(--terracotta);}
+
+  .write-lines textarea{
+    width:100%;
+    border:none;
+    background:repeating-linear-gradient(to bottom, transparent, transparent 27px, var(--hair) 28px);
+    background-position:0 8px;
+    font-family:'Nunito',sans-serif;
+    font-size:15px;
+    line-height:28px;
+    color:var(--brown);
+    resize:none;
+    padding:8px 2px 0;
+  }
+  .write-lines textarea:focus{outline:none;}
+
+  .section-label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:13px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:#fff;
+    background:var(--sage-dark);
+    padding:6px 14px;
+    border-radius:4px;
+    width:fit-content;
+  }
+  .section-label.while{background:var(--terracotta);}
+  .section-label.after{background:var(--gold);}
+
+  .prompt{font-size:14px; color:var(--brown-soft); margin:0;}
+
+  .sketch-box{
+    border:1px dashed var(--hair);
+    border-radius:4px;
+    min-height:90px;
+    display:flex;
+    align-items:flex-end;
+    padding:8px;
+    font-size:11px;
+    color:var(--hair);
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+  }
+
+  .draw-box{
+    border:1px dashed var(--hair);
+    border-radius:4px;
+    flex:1;
+    min-height:200px;
+    display:flex;
+    align-items:flex-end;
+    padding:10px;
+    font-size:11px;
+    color:var(--hair);
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+  }
+
+  .choose-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin:0;
+    padding:0;
+    list-style:none;
+    counter-reset:choose;
+  }
+  .choose-list li{
+    counter-increment:choose;
+    font-size:13.5px;
+    color:var(--brown);
+    padding-left:26px;
+    position:relative;
+  }
+  .choose-list li::before{
+    content:counter(choose);
+    position:absolute;
+    left:0; top:0;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--sage);
+    color:#fff;
+    font-size:10px;
+    font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+
+  .spotlight-box{
+    border:1.5px dashed var(--terracotta);
+    border-radius:6px;
+    padding:14px 16px;
+    background:rgba(196,113,74,0.06);
+    font-size:12.5px;
+    line-height:1.6;
+    color:var(--brown-soft);
+  }
+  .spotlight-box b{color:var(--brown);}
+
+  .privacy-line{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    font-size:11.5px;
+    line-height:1.5;
+    color:var(--brown-soft);
+  }
+  .privacy-line input[type="checkbox"]{
+    margin-top:2px;
+    width:14px;height:14px;
+    accent-color:var(--sage-dark);
+    flex:none;
+  }
+  .privacy-line .credit-field{
+    border:none;
+    border-bottom:1px solid var(--brown-soft);
+    background:transparent;
+    font-family:'Nunito',sans-serif;
+    font-size:12px;
+    color:var(--brown);
+    width:100%;
+    margin-top:4px;
+  }
+
+  .cover-mark{display:flex; flex-direction:column; align-items:center; gap:10px; margin:auto 0;}
+  .cover-mark img{height:64px;}
+  .cover-title{font-size:38px; text-align:center;}
+  .cover-sub{font-size:14px; text-align:center; color:var(--sage-dark); font-style:italic; font-family:'Playfair Display',serif;}
+  .cover-fields{display:flex; flex-direction:column; gap:16px; margin-top:auto;}
+
+  @media print{
+    body{padding:0; gap:0; background:#fff;}
+    .no-print{display:none !important;}
+    .sheet{
+      box-shadow:none;
+      border:none;
+      width:8.5in;
+      height:11in;
+      aspect-ratio:auto;
+      page-break-after:always;
+      max-width:none;
+    }
+    .print-wrap{gap:0;}
+  }
+</style>
+
+<div class="card">
+  <div class="leafline" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 12 4 20 4C20 12 14 20 4 20Z" fill="#7A9B7A" opacity="0.55"/></svg>
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 12 4 20 4C20 12 14 20 4 20Z" fill="#C9A227" opacity="0.5"/></svg>
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 12 4 20 4C20 12 14 20 4 20Z" fill="#7A9B7A" opacity="0.55"/></svg>
+  </div>
+
+  <div class="card-inner">
+    <div class="brandmark">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgMjIwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+Cjx0aXRsZSBpZD0idGl0bGUiPkNoYWxrICZhbXA7IFJvb3RzIExvZ288L3RpdGxlPjxkZXNjIGlkPSJkZXNjIj5Cb3RhbmljYWwgQ2hhbGsgYW5kIFJvb3RzIHdvcmRtYXJrPC9kZXNjPgo8cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjIyMCIgcng9IjI4IiBmaWxsPSIjRkFGN0YyIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDcwIDM4KSI+CjxjaXJjbGUgY3g9IjcwIiBjeT0iNzAiIHI9IjU4IiBmaWxsPSIjRUZGNUVGIiBzdHJva2U9IiM3QTlCN0EiIHN0cm9rZS13aWR0aD0iNSIvPgo8cGF0aCBkPSJNNzAgMTE5IEM2NCA5MiA2NiA3MCA3MCA0MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNkI0QzNCIiBzdHJva2Utd2lkdGg9IjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cGF0aCBkPSJNNzAgNjEgQzQyIDQ0IDM1IDI2IDMxIDEzIEM1MyAxNiA3MiAyOCA3MCA2MVoiIGZpbGw9IiM3QTlCN0EiLz4KPHBhdGggZD0iTTc2IDcwIEMxMDkgNTEgMTIyIDM0IDEyNyAxOCBDMTAwIDE5IDc5IDM3IDc2IDcwWiIgZmlsbD0iI0M0NzE0QSIgb3BhY2l0eT0iLjkiLz4KPHBhdGggZD0iTTcwIDkwIEM0NSA4NCAyOCA5MSAxNSAxMDQgQzM5IDExMyA2MSAxMDggNzAgOTBaIiBmaWxsPSIjQzhEOUM4Ii8+CjxwYXRoIGQ9Ik03MCAxMTkgQzUyIDEzMCA0MiAxMzkgMzQgMTUzIE03MCAxMTkgQzg4IDEzMCA5OCAxMzkgMTA2IDE1MyBNNzAgMTE5IEM2NiAxMzcgNjUgMTQ3IDY1IDE1OCIgc3Ryb2tlPSIjNkI0QzNCIiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgZmlsbD0ibm9uZSIvPgo8L2c+Cjx0ZXh0IHg9IjIwNSIgeT0iOTIiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLCAnVGltZXMgTmV3IFJvbWFuJywgc2VyaWYiIGZvbnQtc2l6ZT0iNTYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM2QjRDM0IiPkNoYWxrICZhbXA7IFJvb3RzPC90ZXh0Pgo8dGV4dCB4PSIyMDkiIHk9IjEzNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBsZXR0ZXItc3BhY2luZz0iNCIgZmlsbD0iI0M0NzE0QSI+QUkg4oCiIExJVEVSQUNZIOKAoiBFWFBFUklFTlRJQUwgTEVBUk5JTkc8L3RleHQ+CjxwYXRoIGQ9Ik0yMTAgMTU0IEg3MjAiIHN0cm9rZT0iI0M4RDlDOCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+" alt="Chalk & Roots logo">
+      <div class="wordmark">Chalk &amp; Roots</div>
+    </div>
+
+    <div class="badges">
+      <span class="badge">Free · America's 250 Collection</span>
+      <span class="badge alt">Grades 3–8 · Fillable &amp; Printable</span>
+    </div>
+
+    <h1 class="title">The<br><em>Nature</em> Journal</h1>
+
+    <p class="sub">A simple field companion for turning what students notice outside into what they remember inside the classroom.</p>
+
+    <p class="caption">Even though this is written for teachers, you might find yourself reflecting on this poignant moment in our history — the kind everyone "remembers," and remembers exactly where they were.</p>
+
+    <div class="cycle">
+      <span class="chip"><span class="n">1</span>Before</span>
+      <span class="arrow">→</span>
+      <span class="chip"><span class="n">2</span>While</span>
+      <span class="arrow">→</span>
+      <span class="chip"><span class="n">3</span>After</span>
+    </div>
+    <div class="tagline">Rooted in Tradition. Growing Through Innovation.</div>
+  </div>
+
+  <div class="leafline bottom" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 12 4 20 4C20 12 14 20 4 20Z" fill="#7A9B7A" opacity="0.55"/></svg>
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 12 4 20 4C20 12 14 20 4 20Z" fill="#C9A227" opacity="0.5"/></svg>
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 12 4 20 4C20 12 14 20 4 20Z" fill="#7A9B7A" opacity="0.55"/></svg>
+  </div>
+</div>
+
+<div class="panel no-print">
+  <div class="panel-label">Fillable &amp; printable journal</div>
+  <p style="font-size:14px; color:var(--brown-soft); max-width:560px; line-height:1.6;">Students can type directly into the fields below on a screen, or you can print both pages (Grades 3–8, US Letter) and hand them out as a paper journal.</p>
+  <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+</div>
+
+<div class="print-wrap" style="display:flex; flex-direction:column; align-items:center; gap:32px; width:100%;">
+
+  <div class="sheet">
+    <div class="leafline" aria-hidden="true" style="margin:0 0 8px;">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 12 4 20 4C20 12 14 20 4 20Z" fill="#7A9B7A" opacity="0.55"/></svg>
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 12 4 20 4C20 12 14 20 4 20Z" fill="#C9A227" opacity="0.5"/></svg>
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 12 4 20 4C20 12 14 20 4 20Z" fill="#7A9B7A" opacity="0.55"/></svg>
+    </div>
+    <div class="cover-mark">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgMjIwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyI+Cjx0aXRsZSBpZD0idGl0bGUiPkNoYWxrICZhbXA7IFJvb3RzIExvZ288L3RpdGxlPjxkZXNjIGlkPSJkZXNjIj5Cb3RhbmljYWwgQ2hhbGsgYW5kIFJvb3RzIHdvcmRtYXJrPC9kZXNjPgo8cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjIyMCIgcng9IjI4IiBmaWxsPSIjRkFGN0YyIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDcwIDM4KSI+CjxjaXJjbGUgY3g9IjcwIiBjeT0iNzAiIHI9IjU4IiBmaWxsPSIjRUZGNUVGIiBzdHJva2U9IiM3QTlCN0EiIHN0cm9rZS13aWR0aD0iNSIvPgo8cGF0aCBkPSJNNzAgMTE5IEM2NCA5MiA2NiA3MCA3MCA0MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNkI0QzNCIiBzdHJva2Utd2lkdGg9IjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cGF0aCBkPSJNNzAgNjEgQzQyIDQ0IDM1IDI2IDMxIDEzIEM1MyAxNiA3MiAyOCA3MCA2MVoiIGZpbGw9IiM3QTlCN0EiLz4KPHBhdGggZD0iTTc2IDcwIEMxMDkgNTEgMTIyIDM0IDEyNyAxOCBDMTAwIDE5IDc5IDM3IDc2IDcwWiIgZmlsbD0iI0M0NzE0QSIgb3BhY2l0eT0iLjkiLz4KPHBhdGggZD0iTTcwIDkwIEM0NSA4NCAyOCA5MSAxNSAxMDQgQzM5IDExMyA2MSAxMDggNzAgOTBaIiBmaWxsPSIjQzhEOUM4Ii8+CjxwYXRoIGQ9Ik03MCAxMTkgQzUyIDEzMCA0MiAxMzkgMzQgMTUzIE03MCAxMTkgQzg4IDEzMCA5OCAxMzkgMTA2IDE1MyBNNzAgMTE5IEM2NiAxMzcgNjUgMTQ3IDY1IDE1OCIgc3Ryb2tlPSIjNkI0QzNCIiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgZmlsbD0ibm9uZSIvPgo8L2c+Cjx0ZXh0IHg9IjIwNSIgeT0iOTIiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLCAnVGltZXMgTmV3IFJvbWFuJywgc2VyaWYiIGZvbnQtc2l6ZT0iNTYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM2QjRDM0IiPkNoYWxrICZhbXA7IFJvb3RzPC90ZXh0Pgo8dGV4dCB4PSIyMDkiIHk9IjEzNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBsZXR0ZXItc3BhY2luZz0iNCIgZmlsbD0iI0M0NzE0QSI+QUkg4oCiIExJVEVSQUNZIOKAoiBFWFBFUklFTlRJQUwgTEVBUk5JTkc8L3RleHQ+CjxwYXRoIGQ9Ik0yMTAgMTU0IEg3MjAiIHN0cm9rZT0iI0M4RDlDOCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+" alt="Chalk & Roots logo">
+      <div class="cover-title">My Nature Journal</div>
+      <div class="cover-sub">A Chalk &amp; Roots Experiential Learning Journal · Grades 3–8</div>
+    </div>
+    <div class="cover-fields">
+      <div class="field-line">Name <input type="text" placeholder=""></div>
+      <div class="field-line">Grade <input type="text" placeholder=""></div>
+      <div class="field-line">Teacher <input type="text" placeholder=""></div>
+      <div class="field-line">Date <input type="text" placeholder=""></div>
+      <div class="field-line" style="border:none;">Where am I? <input type="text" placeholder=""></div>
+    </div>
+  </div>
+
+  <div class="sheet">
+    <span class="section-label">Before</span>
+    <p class="prompt">What are you wondering about before you go? Write one question to carry with you.</p>
+    <div class="write-lines"><textarea rows="2"></textarea></div>
+
+    <span class="section-label while">While You're There</span>
+    <p class="prompt">Look. Notice. Question. Collect evidence. Jot down what you see, hear, or find.</p>
+    <div class="write-lines"><textarea rows="4"></textarea></div>
+    <div class="sketch-box">Sketch it here</div>
+
+    <span class="section-label after">After — Reflect</span>
+    <p class="prompt">What did this experience teach you? How does it connect to what we're learning in class?</p>
+    <div class="write-lines"><textarea rows="4"></textarea></div>
+  </div>
+
+  <div class="sheet">
+    <span class="section-label" style="background:var(--brown-soft);">Blank Page — Draw It Instead</span>
+    <p class="prompt">Some students would rather draw their experience than write about it. Choose ONE from the list below, then draw it in the space on this page:</p>
+    <ol class="choose-list">
+      <li>Something you noticed in a garden</li>
+      <li>A memory from a museum or historical place</li>
+      <li>Something you saw on a walk in your neighborhood</li>
+      <li>A moment worth a photograph</li>
+      <li>A personal memory that taught you something</li>
+    </ol>
+    <div class="field-line">I chose number <input type="text" style="max-width:40px;"></div>
+
+    <div class="draw-box">Drawing space</div>  </div>
+
+</div>
+</body></html>

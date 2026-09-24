@@ -17,27 +17,28 @@
 
 # --- Resource Garden board ---
 /go/garden             https://drive.google.com/file/d/14Pzz8vJ-HmAnBMJFXdD4kEh_ICg9cCBI/view?usp=sharing   302
-/go/writing-organizers https://claude.ai/artifact/TzyE9ZeSNYCFKLcvSEe1FY            302
-/go/prompts            https://claude.ai/artifact/Rh62YTn41CG8PZNZ63FUxc            302
+/go/writing-organizers /resources/argument-practice-test            302
+/go/prompts            /resources/prompts            302
 /go/freebies           https://claude.ai/artifact/48isiciQJCPsKTxwxX4388            302
 /go/nature-journal     https://ko-fi.com/s/319d00450b                               302
 /go/membership-perks   https://docs.google.com/presentation/d/1eMyBtX_ptZw9h0qsB3e6y1F53FJ0_cS0/view   302
 
 # --- Writing organizers & practice tests ---
-/go/story              https://claude.ai/artifact/FSubM723Q3ynQg3AqNEADa            302
+/go/story              /resources/story            302
 /go/facts              https://drive.google.com/file/d/1pbyZ5du6RpDhRiUta5DGwiHdLsASyjQy/view?usp=sharing   302
 /go/argument-organizer https://docs.google.com/document/d/1J384HB9kTyTZL8wmznVC4TQuIDK0dCGx/edit?usp=sharing&rtpof=true&sd=true   302
 /go/practice-test      https://docs.google.com/document/d/18I74updHIEyRngCv_p1kXxRjSbaB47j9/edit?usp=sharing&rtpof=true&sd=true   302
 /go/argument-bonus     https://docs.google.com/document/d/1qq1WV_F34h0TNFR9CAFcXb7hXxv7Hbkf/edit?usp=sharing&rtpof=true&sd=true   302
 /go/drop1-organizer    https://docs.google.com/document/d/1K5-97bIrWQAawqQPJPhSBYzwx-tHAbDTTJqLVZKrD6U/edit   302
-/go/strategy-organizer https://claude.ai/artifact/6jUG7n6CAzMyZk2gdE1cBC            302
-/go/strategy-test      https://claude.ai/code/artifact/daa5a6a6-43e3-4f00-92f3-7399c8727343   302
+/go/strategy-organizer /resources/candy-corn-organizer            302
+/go/strategy-test      /resources/argument-practice-test   302
+/go/candy-corn-pins    /resources/candy-corn-pins            302
 /go/race               https://drive.google.com/file/d/1WX-qUjfvwUm471qRy9FWWAiHDCvSiGYI/view?usp=sharing   302
 /go/main-idea          https://drive.google.com/file/d/1v7rKHuc0BjR11OTQPXxHV4L1Ks0ijoP-/view?usp=sharing   302
 
 # --- Reading & ELD ---
 /go/syllable           https://docs.google.com/document/d/1CfXwrvtVrnG6-kKx0MilXWWVVQyklzkR/edit?usp=sharing&rtpof=true&sd=true   302
-/go/nature             https://claude.ai/artifact/MWq7PCCRk2GMReye3zX4qU            302
+/go/nature             /resources/nature-journal            302
 /go/sentence-frames    https://docs.google.com/presentation/d/1x0jfE3xnKGVPUEPtvpoA9aN0VMgvC26-rzl4SYyEkMU/edit?usp=sharing   302
 /go/question-frames    https://docs.google.com/presentation/d/17bqSdH72oX4OSfTgX4zfo9cX1h1zzk4UvxiBn8yXIZA/edit?usp=sharing   302
 /go/eld-toolkit        https://drive.google.com/file/d/1eMyBtX_ptZw9h0qsB3e6y1F53FJ0_cS0/view?usp=sharing   302

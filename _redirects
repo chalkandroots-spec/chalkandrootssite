@@ -1,0 +1,52 @@
+# Chalk & Roots link list
+#
+# Every link shared in DMs, PDFs, Substack and emails should use a
+# chalkandroots.com/go/... address from this list. When a resource moves,
+# change the destination on its line here and every place that shares
+# the /go/ address follows automatically.
+#
+# Format:  /go/name   destination   302
+# (302 = temporary redirect, so browsers always check this list for the
+# current destination.)
+
+# --- Generator & tools ---
+/go/generator          /generator                                                   302
+/go/sage               https://claude.ai/code/artifact/fdcef287-4ede-447d-b011-f2095cde5e23   302
+/go/escape-room        /escape-room-grade6-7                                        302
+/go/tutoring           https://calendar.app.google/ScPwqBnMKo9iNhsE8                302
+
+# --- Resource Garden board ---
+/go/garden             https://drive.google.com/file/d/14Pzz8vJ-HmAnBMJFXdD4kEh_ICg9cCBI/view?usp=sharing   302
+/go/writing-organizers https://claude.ai/artifact/TzyE9ZeSNYCFKLcvSEe1FY            302
+/go/prompts            https://claude.ai/artifact/Rh62YTn41CG8PZNZ63FUxc            302
+/go/freebies           https://claude.ai/artifact/48isiciQJCPsKTxwxX4388            302
+/go/nature-journal     https://ko-fi.com/s/319d00450b                               302
+/go/membership-perks   https://docs.google.com/presentation/d/1eMyBtX_ptZw9h0qsB3e6y1F53FJ0_cS0/view   302
+
+# --- Writing organizers & practice tests ---
+/go/story              https://claude.ai/artifact/FSubM723Q3ynQg3AqNEADa            302
+/go/facts              https://drive.google.com/file/d/1pbyZ5du6RpDhRiUta5DGwiHdLsASyjQy/view?usp=sharing   302
+/go/argument-organizer https://docs.google.com/document/d/1J384HB9kTyTZL8wmznVC4TQuIDK0dCGx/edit?usp=sharing&rtpof=true&sd=true   302
+/go/practice-test      https://docs.google.com/document/d/18I74updHIEyRngCv_p1kXxRjSbaB47j9/edit?usp=sharing&rtpof=true&sd=true   302
+/go/argument-bonus     https://docs.google.com/document/d/1qq1WV_F34h0TNFR9CAFcXb7hXxv7Hbkf/edit?usp=sharing&rtpof=true&sd=true   302
+/go/drop1-organizer    https://docs.google.com/document/d/1K5-97bIrWQAawqQPJPhSBYzwx-tHAbDTTJqLVZKrD6U/edit   302
+/go/strategy-organizer https://claude.ai/artifact/6jUG7n6CAzMyZk2gdE1cBC            302
+/go/strategy-test      https://claude.ai/code/artifact/daa5a6a6-43e3-4f00-92f3-7399c8727343   302
+/go/race               https://drive.google.com/file/d/1WX-qUjfvwUm471qRy9FWWAiHDCvSiGYI/view?usp=sharing   302
+/go/main-idea          https://drive.google.com/file/d/1v7rKHuc0BjR11OTQPXxHV4L1Ks0ijoP-/view?usp=sharing   302
+
+# --- Reading & ELD ---
+/go/syllable           https://docs.google.com/document/d/1CfXwrvtVrnG6-kKx0MilXWWVVQyklzkR/edit?usp=sharing&rtpof=true&sd=true   302
+/go/nature             https://claude.ai/artifact/MWq7PCCRk2GMReye3zX4qU            302
+/go/sentence-frames    https://docs.google.com/presentation/d/1x0jfE3xnKGVPUEPtvpoA9aN0VMgvC26-rzl4SYyEkMU/edit?usp=sharing   302
+/go/question-frames    https://docs.google.com/presentation/d/17bqSdH72oX4OSfTgX4zfo9cX1h1zzk4UvxiBn8yXIZA/edit?usp=sharing   302
+/go/eld-toolkit        https://drive.google.com/file/d/1eMyBtX_ptZw9h0qsB3e6y1F53FJ0_cS0/view?usp=sharing   302
+/go/eld-unpacking      https://drive.google.com/file/d/1EE2SKg5vvJX7OB0bVklZqUqm9OoLrExS/view?usp=sharing   302
+/go/standards-template https://drive.google.com/file/d/1ytY1hFCMwyQjTVUVS5xxPIU_gy-MzH8d/view?usp=sharing   302
+
+# --- Website freebies & shop ---
+/go/prompt-vault       https://docs.google.com/document/d/12_3XQwSCpwXOxosgokJFOubdz6vAUQfG/edit?usp=sharing&rtpof=true&sd=true   302
+/go/lesson-plan-template https://docs.google.com/document/d/1bs_sJq8F0vyskMpGnXG4r47lxXqfO7Uy/edit?usp=sharing&rtpof=true&sd=true   302
+/go/bell-ringers       https://ko-fi.com/s/2d08864cc2                               302
+/go/checklist          https://ko-fi.com/s/10d90effa8                               302
+/go/shop               https://ko-fi.com/chalkandroots/shop                         302

@@ -1,0 +1,802 @@
+<!doctype html><html lang="en"><head><meta charset=utf8>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5B46QKFX83"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5B46QKFX83');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Chalky Sage · Chalk &amp; Roots Members</title><meta name="robots" content="noindex, nofollow"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-180.png"></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EAF1E6;
+    --surface: #F6FAF3;
+    --ink: #1F2A22;
+    --muted-ink: #5C6B5F;
+    --line: #CCDAC4;
+
+    --board-bg: #1F3B2A;
+    --board-bg-2: #2A4A35;
+    --chalk: #ECEAE0;
+    --chalk-muted: #A9C2AE;
+    --board-line: rgba(255,255,255,0.09);
+
+    --accent: #2F7A47;
+    --accent-ink: #F4FBF5;
+    --sage: #6BAE7F;
+
+    --focus: #2F7A47;
+    --radius-lg: 18px;
+    --radius-sm: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141C16;
+      --surface: #1C261E;
+      --ink: #E3EDE4;
+      --muted-ink: #9DAF9F;
+      --line: #2F3D32;
+
+      --board-bg: #0F1C14;
+      --board-bg-2: #15271B;
+      --chalk: #ECEAE0;
+      --chalk-muted: #93B09A;
+      --board-line: rgba(255,255,255,0.08);
+
+      --accent: #5FBF7C;
+      --accent-ink: #08210F;
+      --sage: #7FCB93;
+      --focus: #5FBF7C;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #141C16;
+    --surface: #1C261E;
+    --ink: #E3EDE4;
+    --muted-ink: #9DAF9F;
+    --line: #2F3D32;
+
+    --board-bg: #0F1C14;
+    --board-bg-2: #15271B;
+    --chalk: #ECEAE0;
+    --chalk-muted: #93B09A;
+    --board-line: rgba(255,255,255,0.08);
+
+    --accent: #5FBF7C;
+    --accent-ink: #08210F;
+    --sage: #7FCB93;
+    --focus: #5FBF7C;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Karla", ui-sans-serif, system-ui, sans-serif;
+    padding: clamp(16px, 3vw, 40px);
+  }
+
+  .page {
+    max-width: 980px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  header.top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 16px;
+  }
+
+  .wordmark {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .wordmark h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(1.7rem, 3vw, 2.2rem);
+    margin: 0;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .wordmark p {
+    margin: 0;
+    color: var(--muted-ink);
+    font-size: 0.95rem;
+  }
+
+  .badge {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background: var(--accent);
+    padding: 5px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+
+  main.layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 22px;
+    align-items: start;
+  }
+
+  @media (max-width: 760px) {
+    main.layout { grid-template-columns: 1fr; }
+  }
+
+  aside.sidebar {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .sidebar h2 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0 0 8px;
+  }
+
+  .sidebar p.lede {
+    margin: 0;
+    color: var(--muted-ink);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .subjects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .subjects span {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted-ink);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 4px 9px;
+  }
+
+  .teaches {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .teaches li {
+    display: flex;
+    gap: 9px;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+
+  .teaches li::before {
+    content: "";
+    flex: none;
+    width: 6px;
+    height: 6px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: var(--sage);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--line);
+    border: none;
+    margin: 0;
+  }
+
+  .starters h3 {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted-ink);
+    margin: 0 0 10px;
+    font-weight: 500;
+  }
+
+  .chip-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .chip-list button {
+    text-align: left;
+    background: var(--bg);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-family: inherit;
+    font-size: 0.86rem;
+    line-height: 1.35;
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .chip-list button:hover:not(:disabled) {
+    border-color: var(--accent);
+  }
+
+  .chip-list button:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+
+  .chip-list button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  section.chatpanel {
+    background: var(--board-bg);
+    background-image: radial-gradient(circle at 18% 8%, var(--board-bg-2), var(--board-bg) 55%);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    height: min(640px, 74vh);
+    overflow: hidden;
+    border: 1px solid var(--board-line);
+  }
+
+  .chat-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--board-line);
+    flex: none;
+  }
+
+  .live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--sage);
+    flex: none;
+  }
+
+  .chat-head span {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--chalk-muted);
+  }
+
+  .messages {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .msg-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .msg-row-you {
+    justify-content: flex-end;
+  }
+
+  .avatar {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .msg {
+    max-width: 78%;
+  }
+
+  .msg-content {
+    font-size: 0.96rem;
+    line-height: 1.55;
+  }
+
+  .msg-sage .msg-content {
+    color: var(--chalk);
+  }
+
+  .msg-sage .msg-content p { margin: 0 0 10px; }
+  .msg-sage .msg-content p:last-child { margin-bottom: 0; }
+  .msg-sage .msg-content ul { margin: 0 0 10px; padding-left: 18px; }
+  .msg-sage .msg-content ul:last-child { margin-bottom: 0; }
+
+  .msg-you .msg-content {
+    background: var(--surface);
+    color: var(--ink);
+    padding: 10px 13px;
+    border-radius: var(--radius-sm) var(--radius-sm) 4px var(--radius-sm);
+  }
+
+  .thinking {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px 0;
+  }
+
+  .thinking .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--chalk-muted);
+    animation: pulse 1.1s ease-in-out infinite;
+  }
+
+  .thinking .dot:nth-child(2) { animation-delay: 0.15s; }
+  .thinking .dot:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes pulse {
+    0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+    40% { opacity: 1; transform: translateY(-2px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .thinking .dot { animation: none; opacity: 0.7; }
+  }
+
+  form.composer {
+    flex: none;
+    border-top: 1px solid var(--board-line);
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  form.composer textarea {
+    flex: 1 1 auto;
+    resize: none;
+    min-height: 42px;
+    max-height: 160px;
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--board-line);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 0.94rem;
+    line-height: 1.4;
+  }
+
+  form.composer textarea:disabled {
+    opacity: 0.6;
+  }
+
+  form.composer textarea:focus-visible,
+  .chip-list button:focus-visible,
+  .icon-btn:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .icon-btn {
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent);
+    color: var(--accent-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .icon-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .icon-btn.stop {
+    background: var(--board-line);
+    color: var(--chalk);
+  }
+
+  .status-line {
+    padding: 0 18px 10px;
+    font-size: 0.78rem;
+    color: var(--chalk-muted);
+    min-height: 1.1em;
+  }
+
+  footer.note {
+    text-align: center;
+    color: var(--muted-ink);
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+</style>
+<style>
+  .gate { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(20px, 4vw, 32px); display: flex; flex-direction: column; gap: 14px; max-width: 520px; }
+  .gate h2 { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.4rem; margin: 0; }
+  .gate p { margin: 0; color: var(--muted-ink); line-height: 1.55; }
+  .gate form { display: flex; gap: 10px; flex-wrap: wrap; }
+  .gate input { flex: 1 1 200px; min-width: 0; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 11px 13px; font: inherit; font-size: 1rem; }
+  .gate button { background: var(--accent); color: var(--accent-ink); border: none; border-radius: 999px; padding: 11px 22px; font: inherit; font-weight: 700; cursor: pointer; }
+  .gate button:disabled { opacity: 0.6; cursor: default; }
+  .gate input:focus-visible, .gate button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .gate .gate-error { color: #B5563A; font-weight: 600; min-height: 1.2em; }
+</style>
+
+<div class="page">
+  <header class="top">
+    <div class="wordmark">
+      <h1>Chalky Sage</h1>
+      <p>A patient AI tutor for Chalk &amp; Roots members</p>
+    </div>
+    <span class="badge">Members only</span>
+  </header>
+
+
+  <section class="gate" id="gate">
+    <h2>Enter your member code</h2>
+    <p>Chalky Sage is included with your Chalk &amp; Roots membership. You'll find the access code in the members-only post on Substack.</p>
+    <form id="gate-form">
+      <label for="gate-code" class="sr-only" style="position:absolute;left:-9999px">Member access code</label>
+      <input id="gate-code" type="password" autocomplete="off" placeholder="Member access code" required>
+      <button type="submit" id="gate-btn">Open Chalky Sage</button>
+    </form>
+    <p class="gate-error" id="gate-error" role="alert"></p>
+  </section>
+
+  <main class="layout" id="app" hidden>
+    <aside class="sidebar">
+      <div>
+        <h2>Meet Chalky Sage</h2>
+        <p class="lede">A virtual tutor for middle school through college. Chalky Sage helps students work through a problem rather than just handing over the answer.</p>
+      </div>
+
+      <div class="subjects">
+        <span>Math</span>
+        <span>Science</span>
+        <span>English</span>
+        <span>History</span>
+      </div>
+
+      <hr class="divider">
+
+      <ul class="teaches">
+        <li>Asks guiding questions instead of lecturing</li>
+        <li>Celebrates effort, not just right answers</li>
+        <li>Explains with everyday analogies</li>
+        <li>Matches the student's pace and vocabulary</li>
+      </ul>
+
+      <hr class="divider">
+
+      <div class="starters">
+        <h3>Try asking</h3>
+        <div class="chip-list" id="starter-chips">
+          <button type="button" disabled data-prompt="Why does factoring a quadratic give me two answers?">Why does factoring a quadratic give two answers?</button>
+          <button type="button" disabled data-prompt="I don't really get how photosynthesis works, can you help?">I don't get how photosynthesis works</button>
+          <button type="button" disabled data-prompt="Can you help me sharpen my essay's thesis statement?">Help me sharpen my thesis statement</button>
+          <button type="button" disabled data-prompt="What actually caused World War I?">What actually caused World War I?</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="chatpanel">
+      <div class="chat-head">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>Live session with Chalky Sage</span>
+      </div>
+
+      <div class="messages" id="messages" aria-live="polite"></div>
+
+      <p class="status-line" id="composer-status">Connecting to Chalky Sage&hellip;</p>
+
+      <form class="composer" id="composer">
+        <textarea
+          id="composer-input"
+          rows="1"
+          placeholder="Ask Chalky Sage about anything you're studying&hellip;"
+          aria-label="Message to Chalky Sage"
+          disabled
+        ></textarea>
+        <button type="submit" class="icon-btn" id="send-btn" aria-label="Send message" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 12L20 4L13 20L11 13L4 12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" fill="currentColor"/>
+          </svg>
+        </button>
+        <button type="button" class="icon-btn stop" id="stop-btn" aria-label="Stop generating" hidden>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor"/>
+          </svg>
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="note">
+    Chalky Sage is an AI tutor, so double-check important answers with your teacher.<br>
+    Conversations aren't saved. Please don't share names, schools, or other personal details in the chat.
+  </footer>
+</div>
+
+<script>
+(function () {
+  var ENDPOINT = "/.netlify/functions/sage-chat";
+  var CODE_KEY = "chalkySageCode";
+
+  var gate = document.getElementById("gate");
+  var gateForm = document.getElementById("gate-form");
+  var gateInput = document.getElementById("gate-code");
+  var gateBtn = document.getElementById("gate-btn");
+  var gateError = document.getElementById("gate-error");
+  var app = document.getElementById("app");
+
+  var messagesEl = document.getElementById("messages");
+  var form = document.getElementById("composer");
+  var textarea = document.getElementById("composer-input");
+  var sendBtn = document.getElementById("send-btn");
+  var stopBtn = document.getElementById("stop-btn");
+  var statusEl = document.getElementById("composer-status");
+  var chips = Array.prototype.slice.call(document.querySelectorAll("#starter-chips button"));
+
+  var accessCode = "";
+  var turns = [];
+  var controller = null;
+  var busy = false;
+
+  function readSaved() {
+    try { return sessionStorage.getItem(CODE_KEY) || ""; } catch (e) { return ""; }
+  }
+  function save(code) {
+    try { sessionStorage.setItem(CODE_KEY, code); } catch (e) {}
+  }
+  function forget() {
+    try { sessionStorage.removeItem(CODE_KEY); } catch (e) {}
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function formatSageText(raw) {
+    var esc = escapeHtml(raw);
+    var blocks = esc.split(/\n{2,}/);
+    var html = blocks.map(function (block) {
+      var lines = block.split("\n").filter(function (l) { return l.length > 0; });
+      var isList = lines.length > 1 && lines.every(function (l) { return /^\s*-\s+/.test(l); });
+      if (isList) {
+        return "<ul>" + lines.map(function (l) {
+          return "<li>" + l.replace(/^\s*-\s+/, "") + "</li>";
+        }).join("") + "</ul>";
+      }
+      return "<p>" + block.replace(/\n/g, "<br>") + "</p>";
+    }).join("");
+    return html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  }
+
+  function addMessage(role, text, waiting) {
+    var row = document.createElement("div");
+    row.className = "msg-row msg-row-" + role;
+    if (role === "sage") {
+      var avatar = document.createElement("span");
+      avatar.className = "avatar";
+      avatar.textContent = "S";
+      row.appendChild(avatar);
+    }
+    var bubble = document.createElement("div");
+    bubble.className = "msg msg-" + role;
+    var content = document.createElement("div");
+    content.className = "msg-content";
+    if (waiting) {
+      content.innerHTML = '<span class="thinking"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+    } else if (role === "sage") {
+      content.innerHTML = formatSageText(text);
+    } else {
+      content.textContent = text;
+    }
+    bubble.appendChild(content);
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return content;
+  }
+
+  function autosize() {
+    textarea.style.height = "auto";
+    textarea.style.height = Math.min(textarea.scrollHeight, 160) + "px";
+  }
+
+  function setBusy(b) {
+    busy = b;
+    textarea.disabled = b;
+    sendBtn.disabled = b;
+    sendBtn.hidden = b;
+    stopBtn.hidden = !b;
+    chips.forEach(function (btn) { btn.disabled = b; });
+  }
+
+  function post(body, signal) {
+    return fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: signal
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        data.status = res.status;
+        return data;
+      });
+    });
+  }
+
+  function showGate(message) {
+    app.hidden = true;
+    gate.hidden = false;
+    gateError.textContent = message || "";
+    gateBtn.disabled = false;
+    gateInput.focus();
+  }
+
+  function openApp() {
+    gate.hidden = true;
+    app.hidden = false;
+    setBusy(false);
+    statusEl.textContent = "";
+    if (!messagesEl.childElementCount) {
+      addMessage("sage", "Hi there! I'm Chalky Sage, a study buddy who's always got time for your questions. Math, science, English, history… what are you working on today?", false);
+    }
+    textarea.focus();
+  }
+
+  function unlock(code) {
+    gateBtn.disabled = true;
+    gateError.textContent = "";
+    return post({ code: code, check: true }).then(function (data) {
+      if (data.ok) {
+        accessCode = code;
+        save(code);
+        openApp();
+      } else if (data.status === 401) {
+        forget();
+        showGate("That code didn't work. Check the members-only post on Substack for the current code.");
+      } else {
+        showGate("Chalky Sage isn't available right now. Please try again later.");
+      }
+    }).catch(function () {
+      showGate("Couldn't reach Chalky Sage. Check your connection and try again.");
+    });
+  }
+
+  function send(rawText) {
+    var text = (rawText || "").trim();
+    if (!text || busy) return;
+
+    addMessage("you", text, false);
+    turns.push({ role: "user", content: text });
+    textarea.value = "";
+    autosize();
+    setBusy(true);
+    statusEl.textContent = "";
+
+    var bubbleContent = addMessage("sage", "", true);
+    controller = new AbortController();
+
+    post({ code: accessCode, messages: turns }, controller.signal).then(function (data) {
+      if (data.text) {
+        bubbleContent.innerHTML = formatSageText(data.text);
+        turns.push({ role: "assistant", content: data.text });
+        if (data.truncated) statusEl.textContent = "That answer got cut short. Try asking for a shorter version.";
+        return;
+      }
+      turns.pop();
+      if (data.status === 401) {
+        bubbleContent.innerHTML = "<p><em>Your member code has changed.</em></p>";
+        forget();
+        showGate("The member code has been updated. Enter the new code from the members-only post.");
+      } else if (data.status === 429) {
+        bubbleContent.innerHTML = "<p><em>Chalky Sage is a little busy right now.</em></p>";
+        statusEl.textContent = "Too many questions at once. Wait a moment and try again.";
+      } else if (data.error === "refused" || data.error === "empty") {
+        bubbleContent.innerHTML = "<p><em>Chalky Sage couldn't answer that one. Try asking it a different way.</em></p>";
+      } else {
+        bubbleContent.innerHTML = "<p><em>Something went wrong on Chalky Sage's end. Try again.</em></p>";
+      }
+    }).catch(function (e) {
+      turns.pop();
+      bubbleContent.innerHTML = (e && e.name === "AbortError")
+        ? "<p><em>Stopped.</em></p>"
+        : "<p><em>Couldn't reach Chalky Sage. Check your connection and try again.</em></p>";
+    }).then(function () {
+      setBusy(false);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      textarea.focus();
+    });
+  }
+
+  gateForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var code = gateInput.value.trim();
+    if (code) unlock(code);
+  });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    send(textarea.value);
+  });
+
+  textarea.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send(textarea.value);
+    }
+  });
+
+  textarea.addEventListener("input", autosize);
+
+  stopBtn.addEventListener("click", function () {
+    if (controller) controller.abort();
+  });
+
+  chips.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      send(btn.getAttribute("data-prompt"));
+    });
+  });
+
+  var saved = readSaved();
+  if (saved) {
+    unlock(saved);
+  } else {
+    showGate("");
+  }
+})();
+</script>
+
+</body></html>

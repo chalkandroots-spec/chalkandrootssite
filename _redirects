@@ -11,7 +11,7 @@
 
 # --- Generator & tools ---
 /go/generator          /generator                                                   302
-/go/sage               https://claude.ai/code/artifact/fdcef287-4ede-447d-b011-f2095cde5e23   302
+/go/sage               /sage                                                        302
 /go/escape-room        /escape-room-grade6-7                                        302
 /go/tutoring           https://calendar.app.google/ScPwqBnMKo9iNhsE8                302
 

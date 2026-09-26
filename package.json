@@ -3,6 +3,7 @@
   "private": true,
   "description": "Dependencies for the Netlify Functions in netlify/functions.",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
     "pdfkit": "^0.20.2",
     "pptxgenjs": "^4.0.1"
   }

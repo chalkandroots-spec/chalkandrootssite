@@ -12,6 +12,7 @@
 # --- Generator & tools ---
 /go/generator          /generator                                                   302
 /go/sage               /sage                                                        302
+/go/ai-continuum       /ai-continuum                                                302
 /go/escape-room        /escape-room-grade6-7                                        302
 /go/tutoring           https://calendar.app.google/ScPwqBnMKo9iNhsE8                302
 

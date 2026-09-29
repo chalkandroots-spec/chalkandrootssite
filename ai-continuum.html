@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5B46QKFX83"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5B46QKFX83');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The AI Continuum · Chalk &amp; Roots</title>
+<meta name="description" content="So, where are you on the AI Continuum? Drag the avatar along the continuum and find your place. Not a test. Just a pause.">
+<link rel="canonical" href="https://chalkandroots.com/ai-continuum">
+<meta property="og:type" content="website">
+<meta property="og:title" content="So, where are you on the AI Continuum?">
+<meta property="og:description" content="Not a test of how good you are at AI. An invitation to pause and ask: where am I right now?">
+<meta property="og:url" content="https://chalkandroots.com/ai-continuum">
+<meta property="og:image" content="https://chalkandroots.com/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sage:#7A9B7A; --sage2:#C8D9C8; --pale:#EFF5EF;
+    --terra:#C4714A; --cream:#FAF7F2; --brown:#4A3428;
+    --charcoal:#35302B; --muted:#6f6760;
+
+    /* Continuum ramp: deepest → medium → richest mid-tone (Observer) → lighter → lightest */
+    --p0:#34483A;
+    --p1:#587A5F;
+    --p2:#5E9A6C;
+    --p3:#A9C3A9;
+    --p4:#DCE8DC;
+
+    --focus:#C4714A;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--cream);color:var(--charcoal);
+    font-family:Nunito,Arial,sans-serif;line-height:1.65;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.42  0 0 0 0 0.30  0 0 0 0 0.23  0 0 0 0.045 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  a{color:inherit}
+  .skip{position:absolute;left:-999px}
+  .skip:focus{left:1rem;top:1rem;background:#fff;padding:.6rem;z-index:99}
+  a:focus-visible,button:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:8px}
+
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
+  .top{padding:18px 0 0}
+  .brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;color:var(--brown)}
+  .brand img{width:40px;height:40px;border-radius:50%}
+
+  header.intro{text-align:center;padding:34px 0 8px}
+  .tag{font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--brown);font-weight:900}
+  h1{
+    font-family:'Playfair Display',Georgia,serif;color:var(--sage);
+    font-size:clamp(2rem,6vw,3.4rem);line-height:1.1;margin:.4rem 0 .8rem;
+  }
+  .instruction{font-size:1.2rem;color:var(--muted);margin:0 auto;max-width:560px}
+  .reassure{font-size:.98rem;color:var(--muted);margin:.6rem auto 0;max-width:560px}
+
+  /* ---------- Continuum ---------- */
+  .continuum{margin:44px auto 0;padding:0 4px}
+  .stage{position:relative;height:150px}
+  .track{
+    position:absolute;left:10%;right:10%;top:98px;height:14px;border-radius:99px;
+    background:linear-gradient(90deg,var(--p0) 0%,var(--p1) 25%,var(--p2) 50%,var(--p3) 75%,var(--p4) 100%);
+    box-shadow:inset 0 0 0 2px rgba(74,52,40,.35);
+    touch-action:pan-y;cursor:pointer;
+  }
+  /* wider hit area so a tap near the line still works */
+  .track::before{content:"";position:absolute;left:-4%;right:-4%;top:-26px;bottom:-26px}
+  .stop{
+    position:absolute;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;
+    background:var(--c);border:3px solid var(--cream);box-shadow:0 0 0 2px rgba(74,52,40,.45);
+    pointer-events:none;
+  }
+  .stop:nth-child(1){left:0}
+  .stop:nth-child(2){left:25%}
+  .stop:nth-child(3){left:50%}
+  .stop:nth-child(4){left:75%}
+  .stop:nth-child(5){left:100%}
+  .stop.center{width:28px;height:28px;margin:-14px 0 0 -14px}
+
+  .marker{
+    position:absolute;top:0;left:50%;width:84px;margin-left:-42px;
+    touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;
+    transition:left .28s cubic-bezier(.3,1.4,.5,1);
+  }
+  .marker.dragging{transition:none;cursor:grabbing}
+  .marker:focus{outline:none}
+  .marker:focus-visible .face{outline:4px solid var(--focus);outline-offset:4px}
+  .face{
+    position:relative;display:block;width:84px;height:84px;border-radius:50%;overflow:hidden;
+    border:4px solid #fff;box-shadow:0 0 0 2px var(--brown),0 8px 18px rgba(74,52,40,.28);
+    background:var(--pale);
+  }
+  /* crop of the existing Chalk & Roots avatar illustration to her face */
+  .face img{position:absolute;width:267%;height:auto;max-width:none;left:-83.5%;top:-172.5%;pointer-events:none}
+  .marker::after{ /* little pointer toward the line */
+    content:"";position:absolute;left:50%;top:86px;margin-left:-8px;
+    border:8px solid transparent;border-top-color:var(--brown);
+  }
+  .cue{
+    position:absolute;left:50%;top:-38px;transform:translateX(-50%) rotate(-4deg);white-space:nowrap;
+    font-family:Caveat,cursive;font-weight:700;font-size:1.6rem;color:var(--terra);
+    transition:opacity .6s ease;pointer-events:none;
+  }
+  .cue.gone{opacity:0}
+
+  .labels{position:relative;height:auto;margin:16px 0 0}
+  .labels ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,1fr)}
+  .labels button{
+    width:100%;background:none;border:0;padding:6px 2px;cursor:pointer;
+    font:800 clamp(.62rem,2.3vw,.85rem)/1.25 Nunito,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);text-align:center;border-radius:10px;
+  }
+  .labels button[aria-pressed="true"]{color:var(--brown);text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px;text-decoration-color:var(--c)}
+  .labels button:hover{color:var(--brown)}
+
+  /* ---------- Reflection card ---------- */
+  .card{
+    margin:26px auto 0;background:#fff;border-radius:22px;padding:28px clamp(20px,5vw,40px);
+    border:2px solid var(--sage2);border-left:10px solid var(--accent,var(--sage2));
+    box-shadow:0 10px 30px rgba(74,52,40,.08);min-height:250px;
+    transition:border-left-color .3s ease;
+  }
+  .card .kicker{font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;font-weight:900;color:var(--muted);margin:0}
+  .card h2{font-family:'Playfair Display',Georgia,serif;color:var(--brown);font-size:clamp(1.6rem,4.5vw,2.3rem);margin:.15rem 0 .1rem;line-height:1.15}
+  .card .headline{font-size:1.25rem;font-weight:700;color:var(--charcoal);margin:0 0 .6rem}
+  .card .support{margin:0 0 1rem;color:var(--muted);font-size:1.05rem}
+  .card .reflect{
+    margin:0;padding:12px 16px;border-radius:14px;background:var(--pale);
+    font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:1.25rem;color:var(--brown);
+  }
+  .card .reflect span{font-family:Nunito,Arial,sans-serif;font-style:normal;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:900;color:var(--muted);display:block;margin-bottom:2px}
+  .card.fresh{display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:1.1rem}
+
+  /* ---------- Closing ---------- */
+  .closing{
+    text-align:center;margin:44px auto 0;max-width:640px;
+    opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease;
+  }
+  .closing.show{opacity:1;transform:none}
+  .closing[hidden]{display:none}
+  .closing .big{font-family:'Playfair Display',Georgia,serif;color:var(--brown);font-size:clamp(1.5rem,4.5vw,2.1rem);line-height:1.25;margin:0 0 .5rem}
+  .closing .small{color:var(--muted);font-size:1.1rem;margin:0}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:13px 22px;border-radius:999px;
+    text-decoration:none;font-weight:800;border:2px solid transparent;transition:.2s;
+  }
+  .btn.primary{background:var(--brown);color:#fff}
+  .btn.primary:hover{background:#331F14}
+  .btn.secondary{border-color:var(--sage);color:var(--brown);background:#fff}
+  .btn.secondary:hover{background:var(--pale)}
+
+  .padlet{
+    margin:34px auto 0;text-align:center;padding:26px 22px;border-radius:22px;
+    background:var(--pale);border:2px dashed var(--sage);
+  }
+  .padlet h3{font-family:'Playfair Display',Georgia,serif;color:var(--brown);font-size:1.5rem;margin:0 0 .4rem}
+  .padlet p{margin:0 auto 1rem;max-width:520px;color:var(--muted)}
+
+  .back{text-align:center;margin:34px 0 0}
+  footer{text-align:center;color:var(--muted);font-size:.9rem;padding:34px 0 46px}
+
+  @media (max-width:520px){
+    .stage{height:132px}
+    .track{top:86px}
+    .marker,.face{width:68px;height:68px}
+    .marker{margin-left:-34px}
+    .marker::after{top:70px}
+    .cue{top:-34px;font-size:1.35rem}
+    .labels{margin-left:-14px;margin-right:-14px}
+    .labels button{letter-spacing:0;font-size:.56rem;padding:6px 0}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .marker,.closing,.cue,.card{transition:none}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#continuum">Skip to the continuum</a>
+<div class="wrap">
+  <div class="top"><a class="brand" href="/"><img src="/assets/chalk-roots-emblem.png" alt="" width="40" height="40"> Chalk &amp; Roots</a></div>
+
+  <header class="intro">
+    <div class="tag">A pause, not a test</div>
+    <h1>So, where are you on the AI Continuum?</h1>
+    <p class="instruction">Drag my Avatar along the continuum and find your place.</p>
+    <p class="reassure">There’s no score here, and no right spot. Just a moment to notice where you are right now.</p>
+  </header>
+
+  <main id="continuum">
+    <section class="continuum" aria-label="AI Continuum">
+      <div class="stage" id="stage">
+        <div class="track" id="track">
+          <span class="stop" style="--c:var(--p0)"></span>
+          <span class="stop" style="--c:var(--p1)"></span>
+          <span class="stop center" style="--c:var(--p2)"></span>
+          <span class="stop" style="--c:var(--p3)"></span>
+          <span class="stop" style="--c:var(--p4)"></span>
+        </div>
+        <div class="marker" id="marker" role="slider" tabindex="0"
+             aria-label="Your place on the AI Continuum"
+             aria-orientation="horizontal"
+             aria-valuemin="1" aria-valuemax="5" aria-valuenow="3"
+             aria-valuetext="Observer. Use the left and right arrow keys to move."
+             aria-controls="card">
+          <span class="cue" id="cue" aria-hidden="true">Drag me!</span>
+          <span class="face"><img src="/assets/angella-avatar-illustration.jpg" alt="" width="1200" height="1800" draggable="false"></span>
+        </div>
+      </div>
+
+      <nav class="labels" aria-label="Choose a position">
+        <ul id="labels"></ul>
+      </nav>
+
+      <div class="card fresh" id="card" aria-live="polite" aria-atomic="true">
+        <p>Drag the Avatar, or use the arrow keys, to find your place.</p>
+      </div>
+    </section>
+
+    <section class="closing" id="closing" hidden aria-label="Closing thought">
+      <p class="big">Your place on the continuum can change. Mine certainly has.</p>
+      <p class="small">There’s no finish line. Just a place to begin.</p>
+    </section>
+
+    <section class="padlet" aria-labelledby="padlet-h">
+      <h3 id="padlet-h">Let’s Explore It Together</h3>
+      <p>AI in education raises a lot of questions, and we don’t have to figure them all out alone. What are you wondering about? What are you trying?</p>
+      <a class="btn primary" href="https://padlet.com/chalkandroots/chalk-roots-explore-question-learn-s0239okq8txxwr29etpu" target="_blank" rel="noopener">Add your voice to the Chalk &amp; Roots conversation</a>
+    </section>
+
+    <p class="back"><a class="btn secondary" href="https://chalkandroots.substack.com/p/i-thought-i-was-an-ai-enthusiast">← Back to the Chalk &amp; Roots story</a></p>
+  </main>
+
+  <footer>© Chalk &amp; Roots · <a href="/">chalkandroots.com</a></footer>
+</div>
+
+<script>
+(function () {
+  var POSITIONS = [
+    { key: 'expert', label: 'Expert', color: 'var(--p0)',
+      headline: 'You know your way around AI.',
+      support: 'You have substantial experience and familiarity with AI tools and concepts.',
+      reflect: 'What are you still learning?' },
+    { key: 'enthusiast', label: 'Enthusiast', color: 'var(--p1)',
+      headline: 'You’re exploring.',
+      support: 'You enjoy trying tools, asking “What if?” and wondering what might be possible.',
+      reflect: 'What keeps you curious?' },
+    { key: 'observer', label: 'Observer', color: 'var(--p2)',
+      headline: 'You’re watching, questioning, and deciding.',
+      support: 'You are interested in AI without feeling the need to chase every new tool. You are paying attention, asking questions, and deciding where AI belongs.',
+      reflect: 'Where does it belong?' },
+    { key: 'disinterested', label: 'Disinterested', color: 'var(--p3)',
+      headline: 'AI isn’t where your attention is right now.',
+      support: 'You may encounter AI in everyday life without actively seeking it out.',
+      reflect: 'What might make you curious?' },
+    { key: 'zero', label: 'Uninformed / Zero', color: 'var(--p4)',
+      headline: 'Everyone starts somewhere.',
+      support: 'You may have had little exposure to AI or simply haven’t had a reason to explore it yet.',
+      reflect: 'What would be a useful place to start?' }
+  ];
+  var LAST = POSITIONS.length - 1;
+
+  var track = document.getElementById('track');
+  var marker = document.getElementById('marker');
+  var card = document.getElementById('card');
+  var cue = document.getElementById('cue');
+  var closing = document.getElementById('closing');
+  var labelList = document.getElementById('labels');
+  var current = 2, touched = false, dragging = false;
+
+  // Label buttons (also a click/tap alternative to dragging)
+  var buttons = POSITIONS.map(function (p, i) {
+    var li = document.createElement('li');
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = p.label;
+    b.style.setProperty('--c', p.color);
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', function () { setPosition(i); });
+    li.appendChild(b); labelList.appendChild(li);
+    return b;
+  });
+
+  function pctFor(i) { return 10 + i * 20; }           // stops sit at 10/30/50/70/90% of the stage
+
+  function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+  function render() {
+    var p = POSITIONS[current];
+    marker.setAttribute('aria-valuenow', current + 1);
+    marker.setAttribute('aria-valuetext', p.label + '. ' + p.headline);
+    buttons.forEach(function (b, i) { b.setAttribute('aria-pressed', String(touched && i === current)); });
+    if (!touched) return;
+    card.classList.remove('fresh');
+    card.style.setProperty('--accent', p.color);
+    card.innerHTML =
+      '<p class="kicker">Position ' + (current + 1) + ' of 5</p>' +
+      '<h2>' + esc(p.label) + '</h2>' +
+      '<p class="headline">' + esc(p.headline) + '</p>' +
+      '<p class="support">' + esc(p.support) + '</p>' +
+      '<p class="reflect"><span>A question to sit with</span>' + esc(p.reflect) + '</p>';
+  }
+
+  function firstTouch() {
+    if (touched) return;
+    touched = true;
+    cue.classList.add('gone');
+    closing.hidden = false;
+    requestAnimationFrame(function () { requestAnimationFrame(function () { closing.classList.add('show'); }); });
+    if (window.gtag) gtag('event', 'continuum_interact');
+  }
+
+  function place(i) { marker.style.left = pctFor(i) + '%'; }
+
+  function setPosition(i) {
+    i = Math.max(0, Math.min(LAST, i));
+    var changed = i !== current;
+    current = i;
+    firstTouch();
+    place(i);
+    render();
+    if (changed && window.gtag) gtag('event', 'continuum_position', { position: POSITIONS[i].key });
+  }
+
+  // ---- Pointer (mouse + touch + pen) ----
+  function nearestFromX(clientX) {
+    var stage = document.getElementById('stage').getBoundingClientRect();
+    var pct = (clientX - stage.left) / stage.width * 100;
+    pct = Math.max(10, Math.min(90, pct));
+    return { pct: pct, idx: Math.round((pct - 10) / 20) };
+  }
+
+  marker.addEventListener('pointerdown', function (e) {
+    dragging = true;
+    marker.classList.add('dragging');
+    marker.setPointerCapture(e.pointerId);
+    marker.focus({ preventScroll: true });
+    e.preventDefault();
+  });
+  marker.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    var n = nearestFromX(e.clientX);
+    marker.style.left = n.pct + '%';                      // follow the finger/cursor…
+    if (n.idx !== current || !touched) {                  // …while the text tracks the nearest position
+      current = n.idx; firstTouch(); render();
+    }
+  });
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    marker.classList.remove('dragging');
+    try { marker.releasePointerCapture(e.pointerId); } catch (_) {}
+    setPosition(current);                                 // …then snap
+  }
+  marker.addEventListener('pointerup', endDrag);
+  marker.addEventListener('pointercancel', endDrag);
+
+  // Tap/click anywhere on the line to move there
+  track.addEventListener('click', function (e) { setPosition(nearestFromX(e.clientX).idx); });
+
+  // ---- Keyboard ----
+  marker.addEventListener('keydown', function (e) {
+    var handled = true;
+    switch (e.key) {
+      case 'ArrowLeft': case 'ArrowDown': setPosition(current - 1); break;
+      case 'ArrowRight': case 'ArrowUp': setPosition(current + 1); break;
+      case 'Home': setPosition(0); break;
+      case 'End': setPosition(LAST); break;
+      default: handled = false;
+    }
+    if (handled) e.preventDefault();
+  });
+
+  place(current);
+  render();
+})();
+</script>
+</body>
+</html>

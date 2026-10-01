@@ -11,6 +11,10 @@
 //   SAGE_ACCESS_CODE   -- the members' access code shared in the paid
 //                        Substack post. Every request is refused until it
 //                        is set.
+//   SAGE_CAMPAIGN_CODE -- optional. A second code for a giveaway or campaign,
+//                        accepted alongside the members' code. Remove the
+//                        variable to switch the campaign code off without
+//                        touching the members' code.
 
 const crypto = require("crypto");
 const Anthropic = require("@anthropic-ai/sdk");
@@ -94,7 +98,11 @@ exports.handler = async (event) => {
     return json(400, { error: "bad_request" });
   }
 
-  if (!codeMatches(payload.code, expectedCode)) return json(401, { error: "wrong_code" });
+  const campaignCode = process.env.SAGE_CAMPAIGN_CODE;
+  const codeOk =
+    codeMatches(payload.code, expectedCode) ||
+    (campaignCode ? codeMatches(payload.code, campaignCode) : false);
+  if (!codeOk) return json(401, { error: "wrong_code" });
 
   // A code check with no conversation lets the page unlock the chat.
   if (payload.check) return json(200, { ok: true });

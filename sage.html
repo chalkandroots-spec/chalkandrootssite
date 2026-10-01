@@ -482,11 +482,11 @@
 
 
   <section class="gate" id="gate">
-    <h2>Enter your member code</h2>
-    <p>Chalky Sage is included with your Chalk &amp; Roots membership. You'll find the access code in the members-only post on Substack.</p>
+    <h2>Enter your access code</h2>
+    <p>Chalky Sage is included with your Chalk &amp; Roots membership and as a bonus for the giveaway winner. Members will find the code in the members-only post on Substack. The winner will find it in their winner message.</p>
     <form id="gate-form">
-      <label for="gate-code" class="sr-only" style="position:absolute;left:-9999px">Member access code</label>
-      <input id="gate-code" type="password" autocomplete="off" placeholder="Member access code" required>
+      <label for="gate-code" class="sr-only" style="position:absolute;left:-9999px">Access code</label>
+      <input id="gate-code" type="password" autocomplete="off" placeholder="Access code" required>
       <button type="submit" id="gate-btn">Open Chalky Sage</button>
     </form>
     <p class="gate-error" id="gate-error" role="alert"></p>
@@ -705,7 +705,7 @@
         openApp();
       } else if (data.status === 401) {
         forget();
-        showGate("That code didn't work. Check the members-only post on Substack for the current code.");
+        showGate("That code didn't work. Members: check the members-only post on Substack. Giveaway winner: check your winner message.");
       } else {
         showGate("Chalky Sage isn't available right now. Please try again later.");
       }

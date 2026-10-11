@@ -460,19 +460,8 @@ async function sendGoldGiveawayWelcome(toEmail) {
     console.error("RESEND_API_KEY is not set - gold-giveaway welcome not sent");
     return false;
   }
-  const text =
-    "Hi \ud83c\udf31 Welcome to Chalk and Roots!\n\n" +
-    "You're now part of a small group of educators I built these resources for. " +
-    "Thank you for trusting me with your planning time.\n\n" +
-    "Here is your free download:\nhttps://chalkandroots.com/#resources\n\n" +
-    "\ud83c\udf31 Warmly,\nAngella";
-  const html =
-    '<div style="font-family:Arial,Helvetica,sans-serif;color:#35302B;line-height:1.6;max-width:520px">' +
-    "<p>Hi \ud83c\udf31 Welcome to Chalk and Roots!</p>" +
-    "<p>You're now part of a small group of educators I built these resources for. " +
-    "Thank you for trusting me with your planning time.</p>" +
-    '<p>Here is your free download:<br><a href="https://chalkandroots.com/#resources" style="color:#C4714A">chalkandroots.com/#resources</a></p>' +
-    "<p>\ud83c\udf31 Warmly,<br>Angella</p></div>";
+  const text = "Hello, fellow educator! 🌱\n\nWelcome to the Chalk & Roots Syllable Celebration!\n\nYour giveaway entry has been received. We're celebrating the six syllable types and practical ways to help students recognize patterns, make connections, and explain their thinking.\n\nWhat to look forward to:\n- Syllable Live PD: practical literacy strategies for your classroom.\n- Flexible learning: instructional content will be available to explore on your own schedule.\n- Celebration giveaway: one eligible entrant will receive the premium SEE THE PATTERN Syllable Pattern Flipbook.\n\nWhen Chalk & Roots reaches 1,500 Instagram followers, we'll celebrate with a live random drawing during our Substack event. You do not need to attend live to be eligible to win. Event details will be announced when confirmed.\n\nExplore Chalk & Roots: https://chalkandroots.com\n\nThank you for being part of this journey and trusting me with your planning time.\n\nTeach the pattern. Build the connection. Grow the reader.\n\nWarmly,\nAngella\nFounder, Chalk & Roots";
+  const html = '<div style="font-family:Arial,Helvetica,sans-serif;color:#35302B;line-height:1.7;max-width:560px;margin:auto">' + text.split("\\n").map(line => line ? '<p>' + line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>' : '').join('') + '</div>';
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",

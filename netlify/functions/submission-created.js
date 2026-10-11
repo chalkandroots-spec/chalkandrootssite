@@ -83,29 +83,25 @@ async function airtableUpdate(tableName, recordId, fields) {
   }
 }
 
-// True if this email already has a Leads row from this form marked Welcomed,
-// so a repeat entry never triggers a second welcome email.
-async function airtableAlreadyWelcomed(email, source) {
+// Look up giveaway confirmations only. Fail closed if Airtable cannot be read.
+async function giveawayWelcomeStatus(email) {
   const apiKey = process.env.AirTable_API_Key || process.env.AIRTABLE_API_KEY;
   const baseId = process.env.AIRTABLE_BASE_ID || "appsKlkufxVhzpE7C";
-  if (!apiKey) return false;
+  if (!apiKey) return { ok: false };
   const esc = (v) => String(v).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
-  const formula = `AND(LOWER({Email})='${esc(email.toLowerCase())}',{Source}='${esc(source)}',{Welcomed}=1)`;
+  const formula = `AND(LOWER({Email})='${esc(email)}',{Source}='gold-giveaway')`;
   try {
-    const res = await fetch(
-      `https://api.airtable.com/v0/${baseId}/Leads?maxRecords=1&filterByFormula=${encodeURIComponent(formula)}`,
-      { headers: { Authorization: `Bearer ${apiKey}` } }
-    );
-    if (!res.ok) {
-      console.error("Airtable lookup error:", res.status, await res.text());
-      return false;
-    }
-    const found = await res.json();
-    return Array.isArray(found.records) && found.records.length > 0;
-  } catch (err) {
-    console.error("Airtable lookup failed:", err);
-    return false;
-  }
+    const url = `https://api.airtable.com/v0/${baseId}/Leads?maxRecords=100&filterByFormula=${encodeURIComponent(formula)}`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${apiKey}` } });
+    if (!res.ok) { console.error("Giveaway lookup failed", res.status); return { ok: false }; }
+    const result = await res.json();
+    const rows = result.records || [];
+    return {
+      ok: true,
+      welcomed: rows.some(row => row.fields && row.fields.Welcomed === true),
+      pendingId: (rows.find(row => row.fields && !row.fields.Welcomed) || {}).id || null,
+    };
+  } catch (err) { console.error("Giveaway lookup error", err); return { ok: false }; }
 }
 
 exports.handler = async (event) => {
@@ -415,42 +411,39 @@ async function handleVaultSignup(data) {
 // Sent at most once per email address: a repeat entry is logged but not
 // re-emailed. The hourly sync routine skips gold-giveaway entirely.
 async function handleGoldGiveaway(data) {
-  const email = data.email || "";
+  const email = String(data.email || "").trim().toLowerCase();
   const source = data.source || "direct";
-
-  if (!email) {
-    return { statusCode: 200, body: "Skipped: no email provided" };
+  if (!email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+    return { statusCode: 200, body: "Skipped: invalid email" };
   }
 
-  const alreadyWelcomed = await airtableAlreadyWelcomed(email, "gold-giveaway");
-  const sourceNote = source && source !== "direct" ? `source: ${source}` : "";
+  const status = await giveawayWelcomeStatus(email);
+  // An unavailable Airtable lookup must not trigger an untracked duplicate send.
+  if (!status.ok) return { statusCode: 200, body: "Giveaway lookup unavailable; Netlify submission retained" };
+  if (status.welcomed) return { statusCode: 200, body: "Giveaway already welcomed" };
 
-  const recordId = await airtableCreate("Leads", {
+  const sourceNote = source !== "direct" ? `source: ${source}` : "";
+  // Reuse a previously failed row on a repeat registration instead of creating
+  // another unwelcomed record. The Resend idempotency key covers racing requests.
+  const recordId = status.pendingId || await airtableCreate("Leads", {
     Email: email,
     Resource: "none / general",
     Source: "gold-giveaway",
     "Submitted At": new Date().toISOString(),
-    Notes: alreadyWelcomed
-      ? [sourceNote, "repeat entry - welcome already sent"].filter(Boolean).join("; ")
-      : sourceNote || undefined,
-    Welcomed: alreadyWelcomed ? true : undefined,
+    Notes: sourceNote || undefined,
   });
+  if (!recordId) return { statusCode: 200, body: "Airtable write failed; Netlify submission retained" };
 
-  if (alreadyWelcomed) {
-    return { statusCode: 200, body: "gold-giveaway handled (repeat entry, no email)" };
-  }
-  if (!recordId) {
-    return { statusCode: 200, body: "gold-giveaway: Airtable write failed, no email sent" };
-  }
-
-  const sent = await sendGoldGiveawayWelcome(email);
-  if (sent) {
-    await airtableUpdate("Leads", recordId, {
+  const result = await sendGoldGiveawayWelcome(email);
+  if (result.ok) {
+    const updated = await airtableUpdate("Leads", recordId, {
       Welcomed: true,
-      Notes: [sourceNote, `welcome sent ${new Date().toISOString()}`].filter(Boolean).join("; "),
+      Notes: [sourceNote, `welcome accepted by Resend ${new Date().toISOString()}`].filter(Boolean).join("; "),
     });
+    if (!updated) console.error("Giveaway welcome accepted but Airtable marking failed", recordId);
+  } else {
+    console.error("Giveaway welcome not accepted by Resend; pending row available for controlled retry", recordId);
   }
-
   return { statusCode: 200, body: "gold-giveaway handled" };
 }
 
@@ -458,7 +451,7 @@ async function sendGoldGiveawayWelcome(toEmail) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.error("RESEND_API_KEY is not set - gold-giveaway welcome not sent");
-    return false;
+    return { ok: false };
   }
   const text = "Hello, fellow educator! 🌱\n\nWelcome to the Chalk & Roots Syllable Celebration!\n\nYour giveaway entry has been received. We're celebrating the six syllable types and practical ways to help students recognize patterns, make connections, and explain their thinking.\n\nWhat to look forward to:\n- Syllable Live PD: practical literacy strategies for your classroom.\n- Flexible learning: instructional content will be available to explore on your own schedule.\n- Celebration giveaway: one eligible entrant will receive the premium SEE THE PATTERN Syllable Pattern Flipbook.\n\nWhen Chalk & Roots reaches 1,500 Instagram followers, we'll celebrate with a live random drawing during our Substack event. You do not need to attend live to be eligible to win. Event details will be announced when confirmed.\n\nExplore Chalk & Roots: https://chalkandroots.com\n\nThank you for being part of this journey and trusting me with your planning time.\n\nTeach the pattern. Build the connection. Grow the reader.\n\nWarmly,\nAngella\nFounder, Chalk & Roots";
   const html = '<div style="font-family:Arial,Helvetica,sans-serif;color:#35302B;line-height:1.7;max-width:560px;margin:auto">' + text.split("\n").map(line => line ? '<p>' + line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>' : '').join('') + '</div>';
@@ -468,6 +461,7 @@ async function sendGoldGiveawayWelcome(toEmail) {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        "Idempotency-Key": require("crypto").createHash("sha256").update("gold-giveaway-welcome-v1:" + toEmail).digest("hex"),
       },
       body: JSON.stringify({
         from: "Angella at Chalk & Roots <noreply@chalkandroots.com>",
@@ -480,9 +474,9 @@ async function sendGoldGiveawayWelcome(toEmail) {
     });
     if (!res.ok) {
       console.error("Resend welcome error:", res.status, await res.text());
-      return false;
+      return { ok: false };
     }
-    return true;
+    return { ok: true };
   } catch (err) {
     console.error("Resend welcome fetch failed:", err);
     return false;

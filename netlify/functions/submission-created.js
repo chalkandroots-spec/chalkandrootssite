@@ -94,6 +94,10 @@ exports.handler = async (event) => {
       return await handleVaultSignup(data);
     }
 
+    if (formName === "gold-giveaway") {
+      return await handleGoldGiveaway(data);
+    }
+
     if (formName === "standards-generator") {
       return await handleStandardsGenerator(data);
     }
@@ -347,6 +351,27 @@ async function handleVaultSignup(data) {
   });
 
   return { statusCode: 200, body: "vault-signup handled" };
+}
+
+// Handles the /giveaway page signup: logs the lead to Airtable Leads so the
+// welcome-email routine and the daily digest pick it up like every other form.
+async function handleGoldGiveaway(data) {
+  const email = data.email || "";
+  const source = data.source || "direct";
+
+  if (!email) {
+    return { statusCode: 200, body: "Skipped: no email provided" };
+  }
+
+  await airtableCreate("Leads", {
+    Email: email,
+    Resource: "none / general",
+    Source: "gold-giveaway",
+    "Submitted At": new Date().toISOString(),
+    Notes: source && source !== "direct" ? `source: ${source}` : undefined,
+  });
+
+  return { statusCode: 200, body: "gold-giveaway handled" };
 }
 
 // Handles the "What's Your Teaching Superpower?" quiz: notifies Angella

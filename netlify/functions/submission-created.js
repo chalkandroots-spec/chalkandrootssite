@@ -418,21 +418,35 @@ async function handleGoldGiveaway(data) {
   }
 
   const status = await giveawayWelcomeStatus(email);
-  // An unavailable Airtable lookup must not trigger an untracked duplicate send.
   if (!status.ok) return { statusCode: 200, body: "Giveaway lookup unavailable; Netlify submission retained" };
   if (status.welcomed) return { statusCode: 200, body: "Giveaway already welcomed" };
 
+  // A pending record can mean that Resend accepted an earlier request but
+  // Airtable failed to record it. Never resend automatically on ambiguity.
+  // Resolve it against Resend's delivery log before a manual retry.
+  if (status.pendingId) {
+    console.warn("Giveaway welcome pending reconciliation", status.pendingId);
+    return { statusCode: 200, body: "Giveaway confirmation pending review" };
+  }
+
   const sourceNote = source !== "direct" ? `source: ${source}` : "";
-  // Reuse a previously failed row on a repeat registration instead of creating
-  // another unwelcomed record. The Resend idempotency key covers racing requests.
-  const recordId = status.pendingId || await airtableCreate("Leads", {
+  const recordId = await airtableCreate("Leads", {
     Email: email,
     Resource: "none / general",
     Source: "gold-giveaway",
     "Submitted At": new Date().toISOString(),
-    Notes: sourceNote || undefined,
+    Notes: [sourceNote, "welcome pending reconciliation if unconfirmed"].filter(Boolean).join("; "),
   });
   if (!recordId) return { statusCode: 200, body: "Airtable write failed; Netlify submission retained" };
+
+  // Re-read after creation: if concurrent requests created multiple records,
+  // elect a single record before asking Resend to send. This reduces races,
+  // but Airtable does not offer a transactional uniqueness constraint.
+  const latest = await giveawayWelcomeStatus(email);
+  if (!latest.ok || latest.welcomed || latest.pendingId !== recordId) {
+    console.warn("Giveaway send deferred: another record owns confirmation", recordId);
+    return { statusCode: 200, body: "Giveaway confirmation deferred for review" };
+  }
 
   const result = await sendGoldGiveawayWelcome(email);
   if (result.ok) {
@@ -440,9 +454,9 @@ async function handleGoldGiveaway(data) {
       Welcomed: true,
       Notes: [sourceNote, `welcome accepted by Resend ${new Date().toISOString()}`].filter(Boolean).join("; "),
     });
-    if (!updated) console.error("Giveaway welcome accepted but Airtable marking failed", recordId);
+    if (!updated) console.error("Resend accepted welcome but Airtable marking failed; reconcile manually", recordId);
   } else {
-    console.error("Giveaway welcome not accepted by Resend; pending row available for controlled retry", recordId);
+    console.error("Giveaway confirmation failed or outcome unknown; reconcile before retry", recordId);
   }
   return { statusCode: 200, body: "gold-giveaway handled" };
 }

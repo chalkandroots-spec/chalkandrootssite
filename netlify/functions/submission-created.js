@@ -413,7 +413,7 @@ async function handleVaultSignup(data) {
 async function handleGoldGiveaway(data) {
   const email = String(data.email || "").trim().toLowerCase();
   const source = data.source || "direct";
-  if (!email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { statusCode: 200, body: "Skipped: invalid email" };
   }
 

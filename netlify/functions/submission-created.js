@@ -45,9 +45,66 @@ async function airtableCreate(tableName, fields) {
     );
     if (!res.ok) {
       console.error("Airtable API error:", tableName, res.status, await res.text());
+      return null;
     }
+    const created = await res.json();
+    return created.id || null;
   } catch (err) {
     console.error("Airtable API fetch failed:", tableName, err);
+    return null;
+  }
+}
+
+// Updates fields on one existing record. Returns true on success.
+async function airtableUpdate(tableName, recordId, fields) {
+  const apiKey = process.env.AirTable_API_Key || process.env.AIRTABLE_API_KEY;
+  const baseId = process.env.AIRTABLE_BASE_ID || "appsKlkufxVhzpE7C";
+  if (!apiKey || !recordId) return false;
+  try {
+    const res = await fetch(
+      `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}/${recordId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fields, typecast: true }),
+      }
+    );
+    if (!res.ok) {
+      console.error("Airtable update error:", tableName, res.status, await res.text());
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("Airtable update failed:", tableName, err);
+    return false;
+  }
+}
+
+// True if this email already has a Leads row from this form marked Welcomed,
+// so a repeat entry never triggers a second welcome email.
+async function airtableAlreadyWelcomed(email, source) {
+  const apiKey = process.env.AirTable_API_Key || process.env.AIRTABLE_API_KEY;
+  const baseId = process.env.AIRTABLE_BASE_ID || "appsKlkufxVhzpE7C";
+  if (!apiKey) return false;
+  const esc = (v) => String(v).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+  const formula = `AND(LOWER({Email})='${esc(email.toLowerCase())}',{Source}='${esc(source)}',{Welcomed}=1)`;
+  try {
+    const res = await fetch(
+      `https://api.airtable.com/v0/${baseId}/Leads?maxRecords=1&filterByFormula=${encodeURIComponent(formula)}`,
+      { headers: { Authorization: `Bearer ${apiKey}` } }
+    );
+    if (!res.ok) {
+      console.error("Airtable lookup error:", res.status, await res.text());
+      return false;
+    }
+    const found = await res.json();
+    return Array.isArray(found.records) && found.records.length > 0;
+  } catch (err) {
+    console.error("Airtable lookup failed:", err);
+    return false;
   }
 }
 
@@ -353,8 +410,10 @@ async function handleVaultSignup(data) {
   return { statusCode: 200, body: "vault-signup handled" };
 }
 
-// Handles the /giveaway page signup: logs the lead to Airtable Leads so the
-// welcome-email routine and the daily digest pick it up like every other form.
+// Handles the /giveaway page signup: logs the lead to Airtable Leads, then
+// sends the welcome email immediately (Resend) and marks the row Welcomed.
+// Sent at most once per email address: a repeat entry is logged but not
+// re-emailed. The hourly sync routine skips gold-giveaway entirely.
 async function handleGoldGiveaway(data) {
   const email = data.email || "";
   const source = data.source || "direct";
@@ -363,15 +422,82 @@ async function handleGoldGiveaway(data) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  await airtableCreate("Leads", {
+  const alreadyWelcomed = await airtableAlreadyWelcomed(email, "gold-giveaway");
+  const sourceNote = source && source !== "direct" ? `source: ${source}` : "";
+
+  const recordId = await airtableCreate("Leads", {
     Email: email,
     Resource: "none / general",
     Source: "gold-giveaway",
     "Submitted At": new Date().toISOString(),
-    Notes: source && source !== "direct" ? `source: ${source}` : undefined,
+    Notes: alreadyWelcomed
+      ? [sourceNote, "repeat entry - welcome already sent"].filter(Boolean).join("; ")
+      : sourceNote || undefined,
+    Welcomed: alreadyWelcomed ? true : undefined,
   });
 
+  if (alreadyWelcomed) {
+    return { statusCode: 200, body: "gold-giveaway handled (repeat entry, no email)" };
+  }
+  if (!recordId) {
+    return { statusCode: 200, body: "gold-giveaway: Airtable write failed, no email sent" };
+  }
+
+  const sent = await sendGoldGiveawayWelcome(email);
+  if (sent) {
+    await airtableUpdate("Leads", recordId, {
+      Welcomed: true,
+      Notes: [sourceNote, `welcome sent ${new Date().toISOString()}`].filter(Boolean).join("; "),
+    });
+  }
+
   return { statusCode: 200, body: "gold-giveaway handled" };
+}
+
+async function sendGoldGiveawayWelcome(toEmail) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.error("RESEND_API_KEY is not set - gold-giveaway welcome not sent");
+    return false;
+  }
+  const text =
+    "Hi \ud83c\udf31 Welcome to Chalk and Roots!\n\n" +
+    "You're now part of a small group of educators I built these resources for. " +
+    "Thank you for trusting me with your planning time.\n\n" +
+    "Here is your free download:\nhttps://chalkandroots.com/#resources\n\n" +
+    "\ud83c\udf31 Warmly,\nAngella";
+  const html =
+    '<div style="font-family:Arial,Helvetica,sans-serif;color:#35302B;line-height:1.6;max-width:520px">' +
+    "<p>Hi \ud83c\udf31 Welcome to Chalk and Roots!</p>" +
+    "<p>You're now part of a small group of educators I built these resources for. " +
+    "Thank you for trusting me with your planning time.</p>" +
+    '<p>Here is your free download:<br><a href="https://chalkandroots.com/#resources" style="color:#C4714A">chalkandroots.com/#resources</a></p>' +
+    "<p>\ud83c\udf31 Warmly,<br>Angella</p></div>";
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Angella at Chalk & Roots <noreply@chalkandroots.com>",
+        reply_to: "chalkandroots@gmail.com",
+        to: [toEmail],
+        subject: "Welcome to Chalk & Roots \ud83c\udf31",
+        text,
+        html,
+      }),
+    });
+    if (!res.ok) {
+      console.error("Resend welcome error:", res.status, await res.text());
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("Resend welcome fetch failed:", err);
+    return false;
+  }
 }
 
 // Handles the "What's Your Teaching Superpower?" quiz: notifies Angella

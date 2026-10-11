@@ -467,7 +467,7 @@ async function sendGoldGiveawayWelcome(toEmail) {
         from: "Angella at Chalk & Roots <noreply@chalkandroots.com>",
         reply_to: "chalkandroots@gmail.com",
         to: [toEmail],
-        subject: "Welcome to Chalk & Roots \ud83c\udf31",
+        subject: "🌱 You’re In! Welcome to the Chalk & Roots Syllable Celebration",
         text,
         html,
       }),
@@ -479,7 +479,7 @@ async function sendGoldGiveawayWelcome(toEmail) {
     return { ok: true };
   } catch (err) {
     console.error("Resend welcome fetch failed:", err);
-    return false;
+    return { ok: false };
   }
 }
 

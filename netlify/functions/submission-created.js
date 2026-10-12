@@ -361,6 +361,15 @@ async function handleSmartContactGeneral(data) {
 // is already in Notes. No schema migration required. Airtable cannot provide
 // atomic uniqueness, so simultaneous first deliveries still need a durable lock.
 async function resourceLeadCreate(form, data, fields) {
+  // Preview migration tests are restricted to the owner's inbox. This guard
+  // runs BEFORE any Airtable write, blob claim, or Resend call for resource leads.
+  // Production behavior is unchanged and the migration flag remains off by default.
+  if (process.env.RESOURCE_WELCOME_EMAILS_ENABLED === "true" &&
+      process.env.CONTEXT === "deploy-preview" &&
+      String(data.email || "").trim().toLowerCase() !== "chalkandroots@gmail.com") {
+    console.warn("Preview resource welcome test blocked: recipient not allowlisted", form);
+    return { id: null, replay: true };
+  }
   // Reserve this immutable submission before Airtable writes or Resend sends.
   // Off by default; no production change until the controlled cutover.
   if (process.env.RESOURCE_WELCOME_EMAILS_ENABLED === "true") {
@@ -403,6 +412,9 @@ async function resourceLeadCreate(form, data, fields) {
 
 // Opt-in migration. Other forms already have acknowledgement or document delivery.
 async function resourceWelcome(data, form, id) {
+  // Defense in depth: a preview can never send migration welcomes to visitors.
+  if (process.env.CONTEXT === "deploy-preview" &&
+      String(data.email || "").trim().toLowerCase() !== "chalkandroots@gmail.com") return;
   if (process.env.RESOURCE_WELCOME_EMAILS_ENABLED !== "true" || !id) return;
   if (!data._netlifySubmissionId || !/^[A-Za-z0-9_-]{8,128}$/.test(data._netlifySubmissionId)) {
     console.error("Resource welcome held: missing stable Netlify submission ID", form, id);

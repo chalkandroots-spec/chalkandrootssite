@@ -353,6 +353,53 @@ async function handleSmartContactGeneral(data) {
   return { statusCode: 200, body: "smart-contact (general) handled" };
 }
 
+
+// Opt-in migration. Other forms already have acknowledgement or document delivery.
+async function resourceWelcome(data, form, id) {
+  if (process.env.RESOURCE_WELCOME_EMAILS_ENABLED !== "true" || !id) return;
+  const email = String(data.email || "").trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !process.env.RESEND_API_KEY) return;
+  const messages = {
+    "vault-signup": "Your AI Prompt Vault signup has been received. Your resource link is available on the website.",
+    "free-resource-gate": "Your resource request has been received. Please follow the resource access instructions on the website.",
+    "quiz-result": "Thank you for completing the Chalk & Roots teaching quiz.",
+  };
+  if (!messages[form]) return;
+  const text = "Hello, fellow educator!\n\n" + messages[form] +
+    "\n\nExplore Chalk & Roots: https://chalkandroots.com\n\n" +
+    "Teach the pattern. Build the connection. Grow the reader.\n\nWarmly,\nAngella";
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + process.env.RESEND_API_KEY,
+        "Content-Type": "application/json",
+        "Idempotency-Key": require("crypto").createHash("sha256")
+          .update("resource-welcome-v1:" + form + ":" + id).digest("hex"),
+      },
+      body: JSON.stringify({
+        from: "Angella at Chalk & Roots <noreply@chalkandroots.com>",
+        reply_to: "chalkandroots@gmail.com",
+        to: [email],
+        subject: "Welcome to Chalk & Roots",
+        text: text,
+      }),
+    });
+    if (!res.ok) {
+      console.error("Resource welcome not accepted; review manually", form, id, res.status);
+      return;
+    }
+    const delivery = await res.json().catch(() => ({}));
+    const ok = await airtableUpdate("Leads", id, {
+      Welcomed: true,
+      Notes: "Resend accepted resource welcome; message " + (delivery.id || "unknown") + "; " + new Date().toISOString(),
+    });
+    if (!ok) console.error("Resend accepted but Airtable update failed; reconcile", form, id);
+  } catch (err) {
+    console.error("Resource welcome outcome unknown; do not auto-retry", form, id, err);
+  }
+}
+
 // Handles the free-resource "unlock" gate next to the Shop lead text:
 // notifies Angella by email so submissions don't just sit unseen in the
 // Netlify Forms dashboard. (Netlify stores every submission there
@@ -368,7 +415,7 @@ async function handleFreeResourceGate(data) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  await airtableCreate("Leads", {
+  const recordId = await airtableCreate("Leads", {
     Name: name,
     Email: email,
     "Grade Band": gradeBand || undefined,
@@ -378,6 +425,7 @@ async function handleFreeResourceGate(data) {
     Notes: source && source !== "direct" ? `source: ${source}` : undefined,
   });
 
+  await resourceWelcome(data, "free-resource-gate", recordId);
   return { statusCode: 200, body: "free-resource-gate handled" };
 }
 
@@ -395,7 +443,7 @@ async function handleVaultSignup(data) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  await airtableCreate("Leads", {
+  const recordId = await airtableCreate("Leads", {
     Email: email,
     Resource: "ai-prompt-vault",
     Source: "vault-signup",
@@ -403,6 +451,7 @@ async function handleVaultSignup(data) {
     Notes: source && source !== "direct" ? `source: ${source}` : undefined,
   });
 
+  await resourceWelcome(data, "vault-signup", recordId);
   return { statusCode: 200, body: "vault-signup handled" };
 }
 
@@ -511,7 +560,7 @@ async function handleQuizResult(data) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  await airtableCreate("Leads", {
+  const recordId = await airtableCreate("Leads", {
     Email: email,
     "Grade Band": gradeBand || undefined,
     Resource: "none / general",
@@ -520,6 +569,7 @@ async function handleQuizResult(data) {
     Notes: `biggest time drain: ${timeDrain}; goal: ${goal}${source && source !== "direct" ? `; source: ${source}` : ""}`,
   });
 
+  await resourceWelcome(data, "quiz-result", recordId);
   return { statusCode: 200, body: "quiz-result handled" };
 }
 

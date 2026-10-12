@@ -109,6 +109,8 @@ exports.handler = async (event) => {
     const body = JSON.parse(event.body || "{}");
     const data = (body.payload && body.payload.data) || {};
     const formName = (body.payload && body.payload.form_name) || "";
+    const submissionId = String((body.payload && (body.payload.id || body.payload.submission_id || body.payload.uuid)) || "").trim();
+    if (submissionId) Object.defineProperty(data, "_netlifySubmissionId", { value: submissionId });
     console.log("TRACE: submission-created invoked. formName =", JSON.stringify(formName));
 
     // "smart-contact" is the consolidated form (replaces the old separate
@@ -354,6 +356,32 @@ async function handleSmartContactGeneral(data) {
 }
 
 
+
+// Netlify event replay guard: reuse a record when its immutable submission ID
+// is already in Notes. No schema migration required. Airtable cannot provide
+// atomic uniqueness, so simultaneous first deliveries still need a durable lock.
+async function resourceLeadCreate(form, data, fields) {
+  const submissionId = data._netlifySubmissionId;
+  const token = submissionId && /^[A-Za-z0-9_-]{8,128}$/.test(submissionId)
+    ? "netlify-submission:" + submissionId : "";
+  const key = process.env.AirTable_API_Key || process.env.AIRTABLE_API_KEY;
+  const base = process.env.AIRTABLE_BASE_ID || "appsKlkufxVhzpE7C";
+  if (token && key) {
+    const esc = value => value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    const formula = "AND({Source}='" + esc(form) + "',FIND('" + esc(token) + "',{Notes}&'')>0)";
+    try {
+      const url = "https://api.airtable.com/v0/" + base + "/Leads?maxRecords=2&filterByFormula=" + encodeURIComponent(formula);
+      const res = await fetch(url, { headers: { Authorization: "Bearer " + key } });
+      if (!res.ok) { console.error("Resource replay lookup failed", form, res.status); return { id: null, replay: true }; }
+      const result = await res.json();
+      if ((result.records || []).length) return { id: result.records[0].id, replay: true };
+    } catch (err) { console.error("Resource replay lookup unavailable", form, err); return { id: null, replay: true }; }
+  }
+  const notes = [fields.Notes, token].filter(Boolean).join("; ");
+  const id = await airtableCreate("Leads", { ...fields, Notes: notes || undefined });
+  return { id, replay: false };
+}
+
 // Opt-in migration. Other forms already have acknowledgement or document delivery.
 async function resourceWelcome(data, form, id) {
   if (process.env.RESOURCE_WELCOME_EMAILS_ENABLED !== "true" || !id) return;
@@ -392,7 +420,7 @@ async function resourceWelcome(data, form, id) {
     const delivery = await res.json().catch(() => ({}));
     const ok = await airtableUpdate("Leads", id, {
       Welcomed: true,
-      Notes: "Resend accepted resource welcome; message " + (delivery.id || "unknown") + "; " + new Date().toISOString(),
+      Notes: [data._netlifySubmissionId ? "netlify-submission:" + data._netlifySubmissionId : "", "Resend accepted resource welcome; message " + (delivery.id || "unknown"), new Date().toISOString()].filter(Boolean).join("; "),
     });
     if (!ok) console.error("Resend accepted but Airtable update failed; reconcile", form, id);
   } catch (err) {
@@ -415,7 +443,7 @@ async function handleFreeResourceGate(data) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  const recordId = await airtableCreate("Leads", {
+  const lead = await resourceLeadCreate("free-resource-gate", data, {
     Name: name,
     Email: email,
     "Grade Band": gradeBand || undefined,
@@ -425,7 +453,7 @@ async function handleFreeResourceGate(data) {
     Notes: source && source !== "direct" ? `source: ${source}` : undefined,
   });
 
-  await resourceWelcome(data, "free-resource-gate", recordId);
+  if (!lead.replay) await resourceWelcome(data, "free-resource-gate", lead.id);
   return { statusCode: 200, body: "free-resource-gate handled" };
 }
 
@@ -443,7 +471,7 @@ async function handleVaultSignup(data) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  const recordId = await airtableCreate("Leads", {
+  const lead = await resourceLeadCreate("vault-signup", data, {
     Email: email,
     Resource: "ai-prompt-vault",
     Source: "vault-signup",
@@ -451,7 +479,7 @@ async function handleVaultSignup(data) {
     Notes: source && source !== "direct" ? `source: ${source}` : undefined,
   });
 
-  await resourceWelcome(data, "vault-signup", recordId);
+  if (!lead.replay) await resourceWelcome(data, "vault-signup", lead.id);
   return { statusCode: 200, body: "vault-signup handled" };
 }
 
@@ -560,7 +588,7 @@ async function handleQuizResult(data) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  const recordId = await airtableCreate("Leads", {
+  const lead = await resourceLeadCreate("quiz-result", data, {
     Email: email,
     "Grade Band": gradeBand || undefined,
     Resource: "none / general",
@@ -569,7 +597,7 @@ async function handleQuizResult(data) {
     Notes: `biggest time drain: ${timeDrain}; goal: ${goal}${source && source !== "direct" ? `; source: ${source}` : ""}`,
   });
 
-  await resourceWelcome(data, "quiz-result", recordId);
+  if (!lead.replay) await resourceWelcome(data, "quiz-result", lead.id);
   return { statusCode: 200, body: "quiz-result handled" };
 }
 

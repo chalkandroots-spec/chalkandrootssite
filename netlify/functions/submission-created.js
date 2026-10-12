@@ -361,6 +361,25 @@ async function handleSmartContactGeneral(data) {
 // is already in Notes. No schema migration required. Airtable cannot provide
 // atomic uniqueness, so simultaneous first deliveries still need a durable lock.
 async function resourceLeadCreate(form, data, fields) {
+  // Reserve this immutable submission before Airtable writes or Resend sends.
+  // Off by default; no production change until the controlled cutover.
+  if (process.env.RESOURCE_WELCOME_EMAILS_ENABLED === "true") {
+    const submissionId = data._netlifySubmissionId;
+    if (!submissionId || !/^[A-Za-z0-9_-]{8,128}$/.test(submissionId)) {
+      console.error("Resource lead held: missing stable submission ID", form);
+      return { id: null, replay: true };
+    }
+    try {
+      const { getStore } = require("@netlify/blobs");
+      const { claimWelcome } = require("./lib/welcome-claim");
+      const store = getStore({ name: "chalk-roots-welcome-claims", consistency: "strong" });
+      const claim = await claimWelcome(store, form, submissionId);
+      if (!claim.claimed) return { id: null, replay: true };
+    } catch (err) {
+      console.error("Resource lead claim failed; held for manual reconciliation", form, submissionId, err);
+      return { id: null, replay: true };
+    }
+  }
   const submissionId = data._netlifySubmissionId;
   const token = submissionId && /^[A-Za-z0-9_-]{8,128}$/.test(submissionId)
     ? "netlify-submission:" + submissionId : "";

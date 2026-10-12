@@ -32,3 +32,14 @@ Sources: standards-generator, smart-contact, vault-signup, free-resource-gate, s
 
 ## Operational note
 Claude's routine reported `USAGE_LIMIT_REACHED`, so the old hourly path may already be failing. Do not rely on its running status as evidence that mail is delivered.
+
+## October 11–12 draft implementation verification
+
+- The opt-in resource handler covers `vault-signup`, `free-resource-gate`, and `quiz-result`. Its flag defaults off; no production rollout.
+- Sequential same-submission replay in mocked network tests: one Airtable row and one Resend request.
+- Concurrent same-submission delivery in mocked tests: **two Airtable rows and two Resend HTTP requests** with identical submission-derived idempotency keys. Mock tests **do not prove** that Resend deduplicates them. Verify Resend's actual behavior and key retention window; implement atomic uniqueness before declaring safe.
+- Airtable read failure: no new row or email. Resend rejection: one pending row, `Welcomed` false, no retry.
+- Current implementation requires `payload.id` / `payload.submission_id` / `payload.uuid`; validate actual Netlify event payload. The Netlify form callback may be invoked differently than expected.
+- Airtable `Notes` is used to carry the submission ID, and the send-success PATCH preserves it. This is a temporary design, not an atomic unique index.
+- Verify the existing `smart-contact` general acknowledgement, `contact` acknowledgement, and standards-generator document email before introducing any generic welcome for those forms. `site-feedback` currently has no visitor acknowledgement in this function.
+- **Do not enable the flag, merge PR #26, or disable Claude until the remaining controls and live tests pass.**

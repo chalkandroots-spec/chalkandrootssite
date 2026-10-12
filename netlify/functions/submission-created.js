@@ -407,7 +407,7 @@ async function resourceWelcome(data, form, id) {
         Authorization: "Bearer " + process.env.RESEND_API_KEY,
         "Content-Type": "application/json",
         "Idempotency-Key": require("crypto").createHash("sha256")
-          .update("resource-welcome-v1:" + form + ":" + id).digest("hex"),
+          .update("resource-welcome-v1:" + form + ":" + data._netlifySubmissionId).digest("hex"),
       },
       body: JSON.stringify({
         from: "Angella at Chalk & Roots <noreply@chalkandroots.com>",

@@ -385,6 +385,10 @@ async function resourceLeadCreate(form, data, fields) {
 // Opt-in migration. Other forms already have acknowledgement or document delivery.
 async function resourceWelcome(data, form, id) {
   if (process.env.RESOURCE_WELCOME_EMAILS_ENABLED !== "true" || !id) return;
+  if (!data._netlifySubmissionId || !/^[A-Za-z0-9_-]{8,128}$/.test(data._netlifySubmissionId)) {
+    console.error("Resource welcome held: missing stable Netlify submission ID", form, id);
+    return;
+  }
   const email = String(data.email || "").trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !process.env.RESEND_API_KEY) return;
   const messages = {

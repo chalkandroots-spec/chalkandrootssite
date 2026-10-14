@@ -62,12 +62,14 @@ input[type=email]{flex:1;min-width:220px;padding:13px 14px;border:2px solid var(
     <input type="hidden" name="form-name" value="gold-giveaway">
     <input type="hidden" class="src-field" name="source" value="">
     <p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
-    <input id="ga-email" name="email" type="email" required placeholder="you@email.com" aria-label="Your email address">
+    <input id="ga-name" name="name" type="text" required maxlength="120" autocomplete="name" placeholder="Your name" aria-label="Your name" style="flex:1;min-width:220px;padding:13px 14px;border:2px solid var(--sage2);border-radius:10px;font-size:1rem;font-family:inherit">
+    <input id="ga-email" name="email" type="email" required autocomplete="email" placeholder="you@email.com" aria-label="Your email address">
+    <label style="width:100%;font-size:.9rem"><input name="rules_acknowledged" type="checkbox" value="yes" required> I understand this is a giveaway entry, limited to one entry per person; no purchase or live attendance required. My information will be used to administer the giveaway.</label>
     <button class="btn" type="submit">Enter the giveaway</button>
   </form>
   <p class="err" id="giveawayErr">Something went wrong. Please try again in a moment.</p>
   <p class="thanks" id="giveawayThanks">🌿 You're in! Watch your inbox, and join the live event on Substack below.</p>
-  <p class="small" style="margin-bottom:0">Open to everyone, anywhere. No purchase necessary. One entry per email.</p>
+  <p class="small" style="margin-bottom:0">Open to everyone, anywhere. No purchase necessary. One entry per person. Duplicate registrations will be reviewed.</p>
 </div>
 
 <div class="card">
@@ -87,7 +89,7 @@ input[type=email]{flex:1;min-width:220px;padding:13px 14px;border:2px solid var(
 
 <script>
 /* ---- Switches: edit these as the campaign moves along ---- */
-var JOIN_LIVE_URL = "";    /* Substack live-event link (leave empty until you have it) */
+var JOIN_LIVE_URL = "https://open.substack.com/live-stream/408247?utm_source=live-stream-scheduled-upsell";    /* Substack live-event link (leave empty until you have it) */
 var RECORDING_URL = "";    /* Substack recording link, used by the winner banner */
 var RULES_URL     = "";    /* Official rules link (leave empty to hide) */
 var WINNER_ON     = false; /* set true to show the Congratulations banner */
@@ -122,6 +124,7 @@ var WINNER_NAME   = "";    /* only fill in if the winner agrees to be named */
 
   var form = document.getElementById('giveawayForm');
   form.addEventListener('submit', function(e){
+    if (new Date() > new Date('2026-11-08T01:00:00Z')) { e.preventDefault(); document.getElementById('giveawayErr').textContent = 'Registration closed November 7 at 6 PM Mountain.'; document.getElementById('giveawayErr').style.display = 'block'; return; }
     e.preventDefault();
     document.getElementById('giveawayErr').style.display = 'none';
     fetch('/', {

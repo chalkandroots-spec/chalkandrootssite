@@ -36,6 +36,14 @@ input[type=email]{flex:1;min-width:220px;padding:13px 14px;border:2px solid var(
 .err{display:none;color:#a33;font-weight:700;margin-top:8px}
 .small{font-size:.85rem;color:var(--muted)}
 #winner{display:none}
+
+/* Substack subscription form */
+.substack-signup{background:var(--pale);border:1px solid var(--sage2);border-radius:24px;padding:28px 20px;text-align:center}
+.substack-signup h2{font-family:'Playfair Display',Georgia,serif;color:var(--brown);font-size:1.8rem;margin:0 0 10px}
+.substack-signup p{max-width:640px;margin:0 auto 14px;color:var(--muted)}
+.substack-signup iframe{display:block;width:100%;max-width:480px;height:320px;margin:18px auto;border:1px solid #EEE;background:white}
+.substack-signup .subscription-note{font-size:.9rem}
+.substack-signup a{color:var(--brown);font-weight:800}
 </style>
 </head>
 <body>
@@ -82,6 +90,14 @@ input[type=email]{flex:1;min-width:220px;padding:13px 14px;border:2px solid var(
   <h2 style="margin-top:0">A free resource for everyone who joins</h2>
   <p style="margin:0">Attend the live event, or watch the recording on Substack, and you get a free Chalk &amp; Roots resource. You don't need to win. Details will be shared with everyone who signs up. Anything already promised publicly as free remains available to everyone. <a href="/ai-continuum-pd">Try the AI continuum PD reflection</a>.</p>
 </div>
+
+<section id="substack-subscribe" class="card substack-signup" aria-labelledby="substack-heading">
+  <h2 id="substack-heading">Subscribe to Chalk &amp; Roots on Substack</h2>
+  <p>Get teaching ideas, literacy resources, and Chalk &amp; Roots updates in your inbox.</p>
+  <iframe src="https://chalkandroots.substack.com/embed" width="480" height="320" title="Subscribe to Chalk and Roots on Substack" loading="lazy" frameborder="0" scrolling="no"></iframe>
+  <p><a href="https://chalkandroots.substack.com/subscribe" target="_blank" rel="noopener">Open the subscription page</a> if the form does not load.</p>
+  <p class="subscription-note">Subscribing is optional and separate from entering the giveaway. To enter, complete the <a href="/giveaway#enter">giveaway registration form</a>.</p>
+</section>
 
 <p class="small" style="margin-top:28px">This giveaway is not sponsored, endorsed, or administered by Instagram or Facebook.
 <span id="rulesWrap" style="display:none"> <a id="rulesLink" href="#" target="_blank" rel="noopener">Official rules</a></span></p>

@@ -99,11 +99,59 @@
 .substack-signup iframe{display:block;width:100%;max-width:480px;height:320px;margin:18px auto;border:1px solid #EEE;background:white}
 .substack-signup .subscription-note{font-size:.9rem}
 .substack-signup a{color:var(--brown);font-weight:800}
+
+/* Fresh teacher prompt library */
+.prompt-library{padding:54px 0;background:#FBF5EA}
+.prompt-library-intro{max-width:820px;margin:0 auto 26px;text-align:center}
+.prompt-library-intro .title{font-size:clamp(2rem,4vw,3rem)}
+.prompt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:26px}
+.prompt-card{background:#fff;border:1px solid var(--terra2);border-radius:18px;padding:20px;box-shadow:0 8px 22px rgba(74,52,40,.06);display:flex;flex-direction:column;align-items:flex-start}
+.prompt-card h3{font-family:'Playfair Display',Georgia,serif;color:var(--brown);font-size:1.12rem;margin:0 0 8px}
+.prompt-card p{color:var(--muted);font-size:.94rem;margin:0 0 14px}
+.prompt-card pre{white-space:pre-wrap;overflow-wrap:anywhere;font: .88rem/1.55 Nunito,Arial,sans-serif;color:var(--charcoal);background:var(--cream);border-left:3px solid var(--terra);border-radius:8px;padding:12px;margin:0 0 14px;width:100%}
+.prompt-card button{margin-top:auto;background:var(--brown);color:#fff;border:0;border-radius:999px;padding:10px 16px;font:800 .9rem Nunito,Arial,sans-serif;cursor:pointer}
+.prompt-card button:hover{background:#331F14}
+.prompt-library-note{text-align:center;color:var(--muted);font-size:.92rem;margin-top:22px}
+@media(max-width:650px){.prompt-grid{grid-template-columns:1fr}.prompt-library{padding:42px 0}}
+
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="ticker-bar" role="status" aria-label="Announcement"><div class="ticker-track"><span>🌿 Our Chalk &amp; Roots Gold Vault celebration has ended. Thank you to every teacher who joined us! Explore our literacy resources and practical AI tools in the shop. <a href="https://ko-fi.com/chalkandroots/shop" target="_blank" rel="noopener">Visit the Chalk &amp; Roots shop →</a></span><span>🌿 Our Chalk &amp; Roots Gold Vault celebration has ended. Thank you to every teacher who joined us! Explore our literacy resources and practical AI tools in the shop. <a href="https://ko-fi.com/chalkandroots/shop" target="_blank" rel="noopener">Visit the Chalk &amp; Roots shop →</a></span></div></div>
+
+<section id="fresh-prompts" class="prompt-library">
+ <div class="wrap">
+  <div class="prompt-library-intro">
+   <p class="tag">Fresh from Chalk &amp; Roots</p>
+   <h2 class="title">20 Ready-to-Use Prompts for K–8 Teachers</h2>
+   <p class="lead" style="margin:0 auto">Practical starting points for literacy instruction, differentiation, planning, and student support. Choose a prompt, copy it, and customize the bracketed details for your classroom.</p>
+  </div>
+  <div class="prompt-grid">
+   <article class="prompt-card"><h3>1. Build a Phonics Mini-Lesson</h3><p>Plan explicit, systematic instruction around one phonics skill.</p><pre id="cr-prompt-1">Act as a K–2 literacy coach. Create a 15-minute explicit phonics mini-lesson for [grade] focused on [phonics skill]. Include a clear model, guided practice, 5 examples that progress in difficulty, a quick student response routine, and an exit check. Keep the language student-friendly.</pre><button type="button" onclick="copyCRPrompt(1)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>2. Investigate a Syllable Pattern</h3><p>Help students notice and explain spelling patterns.</p><pre id="cr-prompt-2">Act as a structured literacy specialist. Create a word study for [grade] on the [syllable type or spelling pattern]. Include 12 carefully chosen words, a sort with clear categories, teacher think-aloud questions, common misconceptions, and an “I know because…” explanation frame. Do not include words that do not fit the pattern.</pre><button type="button" onclick="copyCRPrompt(2)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>3. Strengthen Vocabulary</h3><p>Move beyond definitions to meaningful word learning.</p><pre id="cr-prompt-3">Design a vocabulary routine for [grade] using these words: [word list]. For each word, provide a student-friendly meaning, morphology or word-part insight when appropriate, an example and non-example, a discussion question, and a short retrieval practice activity. Keep the routine within [time] minutes.</pre><button type="button" onclick="copyCRPrompt(3)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>4. Make a Text Accessible</h3><p>Support access without removing the thinking.</p><pre id="cr-prompt-4">Act as a literacy and accessibility coach. Review this text for [grade]: [paste text]. Identify likely barriers to access, then suggest vocabulary previews, chunking, visual supports, and brief comprehension checks. Preserve the central ideas and grade-level thinking; do not rewrite the text unless asked.</pre><button type="button" onclick="copyCRPrompt(4)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>5. Plan Three Levels of Support</h3><p>Keep one learning target while varying access points.</p><pre id="cr-prompt-5">Differentiate this learning objective for [grade]: [objective]. Create a scaffolded pathway, an on-level pathway, and an extension pathway. For each, include the student task, materials or support, teacher check-in, and evidence of learning. Keep the same core learning target across all three.</pre><button type="button" onclick="copyCRPrompt(5)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>6. Support Multilingual Learners</h3><p>Plan language supports alongside content learning.</p><pre id="cr-prompt-6">Act as an experienced ELD teacher. For this lesson objective [objective] and grade [grade], identify the language students must understand and use. Provide a short vocabulary preview, visuals or gestures, two sentence frames at different language demands, structured partner talk, and a way to check content understanding without confusing it with English proficiency.</pre><button type="button" onclick="copyCRPrompt(6)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>7. Create Text-Dependent Questions</h3><p>Build questions that require evidence from the text.</p><pre id="cr-prompt-7">Using this passage [paste passage] for [grade], write 6 text-dependent questions: two to locate key information, two to make an inference, one about author's craft or structure, and one that synthesizes ideas. Provide the evidence students should revisit and a brief teacher answer guide.</pre><button type="button" onclick="copyCRPrompt(7)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>8. Teach Main Idea and Details</h3><p>Move students from topic to a supported main idea.</p><pre id="cr-prompt-8">Create a [grade]-appropriate lesson on distinguishing topic, main idea, and supporting details. Include a short original informational paragraph, a teacher think-aloud, a graphic organizer description, three guided questions, and an independent check. Make the main idea precise and supported by the details.</pre><button type="button" onclick="copyCRPrompt(8)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>9. Build a Small-Group Plan</h3><p>Use a specific skill need to shape instruction.</p><pre id="cr-prompt-9">Plan a 20-minute small-group lesson for [grade]. Students need support with [observed skill or error]. Include a quick diagnostic, explicit reteaching, guided practice with examples, immediate corrective feedback, and a final transfer check. List what I should listen and look for.</pre><button type="button" onclick="copyCRPrompt(9)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>10. Design a Formative Check</h3><p>Find out what students understand before moving on.</p><pre id="cr-prompt-10">Create 5 quick formative assessment items for [grade] on [skill or objective]. Include a mix of response types, the correct answer or look-fors, what each incorrect response may reveal, and a suggested next instructional move. The check should take no more than [number] minutes.</pre><button type="button" onclick="copyCRPrompt(10)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>11. Unpack a Standard</h3><p>Translate a standard into teachable evidence.</p><pre id="cr-prompt-11">Act as a curriculum specialist. Unpack this standard for [grade]: [paste standard]. Identify the knowledge, skills, and academic vocabulary; describe what proficiency looks like; list likely prerequisite skills; and propose one aligned learning target and two ways students can demonstrate mastery. Do not add requirements that are not in the standard.</pre><button type="button" onclick="copyCRPrompt(11)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>12. Improve a Writing Task</h3><p>Clarify purpose, audience, evidence, and success criteria.</p><pre id="cr-prompt-12">Revise this writing assignment for [grade]: [paste assignment]. Make the purpose and audience clear, identify the expected text type, add a focused planning step, and create a student-friendly success checklist aligned to [writing standard]. Preserve the assignment's intent.</pre><button type="button" onclick="copyCRPrompt(12)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>13. Give Useful Writing Feedback</h3><p>Make feedback specific, actionable, and encouraging.</p><pre id="cr-prompt-13">Review this student writing sample for [grade] using these criteria: [criteria]. First identify one demonstrated strength. Then name one high-impact next step and show a brief example of how the student could revise one part. Do not rewrite the whole piece or change the student's voice. Writing sample: [paste sample].</pre><button type="button" onclick="copyCRPrompt(13)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>14. Create a Meaningful Word Sort</h3><p>Use examples that reveal the feature being taught.</p><pre id="cr-prompt-14">Create a word sort for [grade] focused on [target feature]. Provide 16 words divided into clear categories, a teacher answer key, 4 challenge words if appropriate, and questions that prompt students to explain the feature they noticed. Check every word against the category rules before presenting the sort.</pre><button type="button" onclick="copyCRPrompt(14)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>15. Plan a Cross-Curricular Project</h3><p>Connect literacy with science or social studies.</p><pre id="cr-prompt-15">Design a [length]-day cross-curricular project for [grade] connecting literacy with [science or social studies topic]. Include an engaging driving question, reading and vocabulary work, discussion, a writing product, student choice, materials, and a simple rubric. Keep the project realistic for a classroom.</pre><button type="button" onclick="copyCRPrompt(15)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>16. Refresh Literacy Centers</h3><p>Build purposeful practice students can manage.</p><pre id="cr-prompt-16">Create 4 literacy center activities for [grade] that reinforce [current skill]. For each center, list the objective, materials, student directions, expected time, and a simple accountability check. Include one low-prep option and explain how students can work independently.</pre><button type="button" onclick="copyCRPrompt(16)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>17. Prepare a Read-Aloud</h3><p>Plan intentional stops for thinking and talk.</p><pre id="cr-prompt-17">Plan an interactive read-aloud for [book or passage] with [grade]. Identify 4 purposeful stopping points, a question for each stop, one vocabulary focus, a brief turn-and-talk, and a closing response that connects to the learning objective [objective]. Avoid interrupting the flow too often.</pre><button type="button" onclick="copyCRPrompt(17)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>18. Turn Errors into Next Steps</h3><p>Use student work to identify what to reteach.</p><pre id="cr-prompt-18">Analyze these anonymized student responses to [task]: [paste responses]. Group the errors by likely underlying misconception, distinguish patterns from one-off mistakes, and recommend a short reteaching move for each group. Do not diagnose students. Suggest one follow-up question to confirm each interpretation.</pre><button type="button" onclick="copyCRPrompt(18)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>19. Build a Family Learning Connection</h3><p>Share a practical activity families can do at home.</p><pre id="cr-prompt-19">Write a welcoming family note for [grade] explaining our current focus on [skill or topic]. Include a 5-minute no-cost activity families can try using everyday materials, a sample conversation prompt, and reassurance that families can adapt it to their language and routines. Use clear, jargon-free language.</pre><button type="button" onclick="copyCRPrompt(19)">Copy prompt</button></article>
+   <article class="prompt-card"><h3>20. Check an AI-Generated Lesson</h3><p>Keep teacher judgment and accuracy at the center.</p><pre id="cr-prompt-20">Act as a critical instructional reviewer. Evaluate this AI-generated lesson for [grade] against the objective [objective] and standard [standard]. Check alignment, factual accuracy, developmental appropriateness, accessibility, bias, and whether the assessment measures the stated learning. Flag unsupported claims and recommend specific revisions. Lesson: [paste lesson].</pre><button type="button" onclick="copyCRPrompt(20)">Copy prompt</button></article>
+  </div>
+  <p class="prompt-library-note">Use AI as a planning partner, not a replacement for teacher expertise. Review every output for accuracy, student needs, and instructional fit.</p>
+ </div>
+</section>
 <div class="osr-wrap"><div class="burst"><span class="burst-text">One Stop<br>Teacher<br>Resources</span></div>
 <div class="vault-signup"><p style="font-weight:900;color:var(--brown)">🎁 Get the free AI Prompt Vault</p><p style="color:var(--muted);font-size:.9rem">Drop your email and it's yours — 20 ready-to-copy AI prompts for teachers.</p><form id="vaultSignupForm" name="vault-signup" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="return handleVaultSignupSubmit(event)"><input type="hidden" name="form-name" value="vault-signup"><input type="hidden" class="src-field" name="source" value=""><p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p><input id="vault-email" name="email" type="email" required placeholder="you@email.com"><button type="submit" class="btn primary" style="width:100%">Sign up here &#8594;</button></form><p id="vaultSignupThanks" style="display:none;margin:0;font-weight:800;color:var(--sage)">🌿 You're in! <a href="https://docs.google.com/document/d/12_3XQwSCpwXOxosgokJFOubdz6vAUQfG/edit?usp=sharing&ouid=111561370499612792927&rtpof=true&sd=true" target="_blank" rel="noopener" style="color:var(--sage);text-decoration:underline">Get your AI Prompt Vault &#8594;</a></p></div>
 </div>
@@ -154,6 +202,26 @@
 <footer><div class="wrap">© 2026 Angella Barngrover · Chalk & Roots · AI observer · Science of Reading · Experiential learning</div></footer>
 
 <script>
+
+function copyCRPrompt(number){
+  var el = document.getElementById('cr-prompt-' + number);
+  if(!el) return;
+  var text = el.textContent;
+  function fallbackCopy(){
+    var area = document.createElement('textarea');
+    area.value = text; area.setAttribute('readonly','');
+    area.style.position = 'absolute'; area.style.left = '-9999px';
+    document.body.appendChild(area); area.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(area);
+  }
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).catch(fallbackCopy);
+  } else { fallbackCopy(); }
+  var button = el.parentElement.querySelector('button');
+  if(button){ var old = button.textContent; button.textContent = 'Copied!'; setTimeout(function(){button.textContent=old;},1600); }
+}
+
 function updateSmartForm(topic){
   document.querySelectorAll('.smart-field').forEach(function(el){ el.classList.remove('active'); });
   var gradeSel = document.getElementById('sc-grade');

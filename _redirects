@@ -10,7 +10,7 @@
 # current destination.)
 
 # --- Generator & tools ---
-/go/generator          /generator                                                   302
+/go/generator          https://chalk-roots-standards-generator.pages.dev/         302
 /go/sage               /sage                                                        302
 /go/ai-continuum       /ai-continuum                                                302
 /go/escape-room        /escape-room-grade6-7                                        302

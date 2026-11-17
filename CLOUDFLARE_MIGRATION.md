@@ -42,3 +42,4 @@ This branch prepares the existing Chalk & Roots main website for a parallel Clou
 ## Current state
 
 This branch is preparation only. Chalky Sage remains outside this migration. Website forms are still a blocker. No production deployment, DNS change, or Netlify cancellation is authorized by this file.
+Preview deployment trigger

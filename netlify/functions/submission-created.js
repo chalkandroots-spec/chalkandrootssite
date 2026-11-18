@@ -45,10 +45,63 @@ async function airtableCreate(tableName, fields) {
     );
     if (!res.ok) {
       console.error("Airtable API error:", tableName, res.status, await res.text());
+      return null;
     }
+    const created = await res.json();
+    return created.id || null;
   } catch (err) {
     console.error("Airtable API fetch failed:", tableName, err);
+    return null;
   }
+}
+
+// Updates fields on one existing record. Returns true on success.
+async function airtableUpdate(tableName, recordId, fields) {
+  const apiKey = process.env.AirTable_API_Key || process.env.AIRTABLE_API_KEY;
+  const baseId = process.env.AIRTABLE_BASE_ID || "appsKlkufxVhzpE7C";
+  if (!apiKey || !recordId) return false;
+  try {
+    const res = await fetch(
+      `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}/${recordId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fields, typecast: true }),
+      }
+    );
+    if (!res.ok) {
+      console.error("Airtable update error:", tableName, res.status, await res.text());
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("Airtable update failed:", tableName, err);
+    return false;
+  }
+}
+
+// Look up giveaway confirmations only. Fail closed if Airtable cannot be read.
+async function giveawayWelcomeStatus(email) {
+  const apiKey = process.env.AirTable_API_Key || process.env.AIRTABLE_API_KEY;
+  const baseId = process.env.AIRTABLE_BASE_ID || "appsKlkufxVhzpE7C";
+  if (!apiKey) return { ok: false };
+  const esc = (v) => String(v).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+  const formula = `AND(LOWER({Email})='${esc(email)}',{Source}='gold-giveaway')`;
+  try {
+    const url = `https://api.airtable.com/v0/${baseId}/Leads?maxRecords=100&filterByFormula=${encodeURIComponent(formula)}`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${apiKey}` } });
+    if (!res.ok) { console.error("Giveaway lookup failed", res.status); return { ok: false }; }
+    const result = await res.json();
+    const rows = result.records || [];
+    return {
+      ok: true,
+      welcomed: rows.some(row => row.fields && row.fields.Welcomed === true),
+      pendingId: (rows.find(row => row.fields && !row.fields.Welcomed) || {}).id || null,
+    };
+  } catch (err) { console.error("Giveaway lookup error", err); return { ok: false }; }
 }
 
 exports.handler = async (event) => {
@@ -56,6 +109,8 @@ exports.handler = async (event) => {
     const body = JSON.parse(event.body || "{}");
     const data = (body.payload && body.payload.data) || {};
     const formName = (body.payload && body.payload.form_name) || "";
+    const submissionId = String((body.payload && (body.payload.id || body.payload.submission_id || body.payload.uuid)) || "").trim();
+    if (submissionId) Object.defineProperty(data, "_netlifySubmissionId", { value: submissionId });
     console.log("TRACE: submission-created invoked. formName =", JSON.stringify(formName));
 
     // "smart-contact" is the consolidated form (replaces the old separate
@@ -300,6 +355,114 @@ async function handleSmartContactGeneral(data) {
   return { statusCode: 200, body: "smart-contact (general) handled" };
 }
 
+
+
+// Netlify event replay guard: reuse a record when its immutable submission ID
+// is already in Notes. No schema migration required. Airtable cannot provide
+// atomic uniqueness, so simultaneous first deliveries still need a durable lock.
+async function resourceLeadCreate(form, data, fields) {
+  // Preview migration tests are restricted to the owner's inbox. This guard
+  // runs BEFORE any Airtable write, blob claim, or Resend call for resource leads.
+  // Production behavior is unchanged and the migration flag remains off by default.
+  if (process.env.RESOURCE_WELCOME_EMAILS_ENABLED === "true" &&
+      process.env.CONTEXT === "deploy-preview" &&
+      String(data.email || "").trim().toLowerCase() !== "chalkandroots@gmail.com") {
+    console.warn("Preview resource welcome test blocked: recipient not allowlisted", form);
+    return { id: null, replay: true };
+  }
+  // Reserve this immutable submission before Airtable writes or Resend sends.
+  // Off by default; no production change until the controlled cutover.
+  if (process.env.RESOURCE_WELCOME_EMAILS_ENABLED === "true") {
+    const submissionId = data._netlifySubmissionId;
+    if (!submissionId || !/^[A-Za-z0-9_-]{8,128}$/.test(submissionId)) {
+      console.error("Resource lead held: missing stable submission ID", form);
+      return { id: null, replay: true };
+    }
+    try {
+      const { getStore } = require("@netlify/blobs");
+      const { claimWelcome } = require("./lib/welcome-claim");
+      const store = getStore({ name: "chalk-roots-welcome-claims", consistency: "strong" });
+      const claim = await claimWelcome(store, form, submissionId);
+      if (!claim.claimed) return { id: null, replay: true };
+    } catch (err) {
+      console.error("Resource lead claim failed; held for manual reconciliation", form, submissionId, err);
+      return { id: null, replay: true };
+    }
+  }
+  const submissionId = data._netlifySubmissionId;
+  const token = submissionId && /^[A-Za-z0-9_-]{8,128}$/.test(submissionId)
+    ? "netlify-submission:" + submissionId : "";
+  const key = process.env.AirTable_API_Key || process.env.AIRTABLE_API_KEY;
+  const base = process.env.AIRTABLE_BASE_ID || "appsKlkufxVhzpE7C";
+  if (token && key) {
+    const esc = value => value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    const formula = "AND({Source}='" + esc(form) + "',FIND('" + esc(token) + "',{Notes}&'')>0)";
+    try {
+      const url = "https://api.airtable.com/v0/" + base + "/Leads?maxRecords=2&filterByFormula=" + encodeURIComponent(formula);
+      const res = await fetch(url, { headers: { Authorization: "Bearer " + key } });
+      if (!res.ok) { console.error("Resource replay lookup failed", form, res.status); return { id: null, replay: true }; }
+      const result = await res.json();
+      if ((result.records || []).length) return { id: result.records[0].id, replay: true };
+    } catch (err) { console.error("Resource replay lookup unavailable", form, err); return { id: null, replay: true }; }
+  }
+  const notes = [fields.Notes, token].filter(Boolean).join("; ");
+  const id = await airtableCreate("Leads", { ...fields, Notes: notes || undefined });
+  return { id, replay: false };
+}
+
+// Opt-in migration. Other forms already have acknowledgement or document delivery.
+async function resourceWelcome(data, form, id) {
+  // Defense in depth: a preview can never send migration welcomes to visitors.
+  if (process.env.CONTEXT === "deploy-preview" &&
+      String(data.email || "").trim().toLowerCase() !== "chalkandroots@gmail.com") return;
+  if (process.env.RESOURCE_WELCOME_EMAILS_ENABLED !== "true" || !id) return;
+  if (!data._netlifySubmissionId || !/^[A-Za-z0-9_-]{8,128}$/.test(data._netlifySubmissionId)) {
+    console.error("Resource welcome held: missing stable Netlify submission ID", form, id);
+    return;
+  }
+  const email = String(data.email || "").trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !process.env.RESEND_API_KEY) return;
+  const messages = {
+    "vault-signup": "Your AI Prompt Vault signup has been received. Your resource link is available on the website.",
+    "free-resource-gate": "Your resource request has been received. Please follow the resource access instructions on the website.",
+    "quiz-result": "Thank you for completing the Chalk & Roots teaching quiz.",
+  };
+  if (!messages[form]) return;
+  const text = "Hello, fellow educator!\n\n" + messages[form] +
+    "\n\nExplore Chalk & Roots: https://chalkandroots.com\n\n" +
+    "Teach the pattern. Build the connection. Grow the reader.\n\nWarmly,\nAngella";
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + process.env.RESEND_API_KEY,
+        "Content-Type": "application/json",
+        "Idempotency-Key": require("crypto").createHash("sha256")
+          .update("resource-welcome-v1:" + form + ":" + data._netlifySubmissionId).digest("hex"),
+      },
+      body: JSON.stringify({
+        from: "Angella at Chalk & Roots <noreply@chalkandroots.com>",
+        reply_to: "chalkandroots@gmail.com",
+        to: [email],
+        subject: "Welcome to Chalk & Roots",
+        text: text,
+      }),
+    });
+    if (!res.ok) {
+      console.error("Resource welcome not accepted; review manually", form, id, res.status);
+      return;
+    }
+    const delivery = await res.json().catch(() => ({}));
+    const ok = await airtableUpdate("Leads", id, {
+      Welcomed: true,
+      Notes: [data._netlifySubmissionId ? "netlify-submission:" + data._netlifySubmissionId : "", "Resend accepted resource welcome; message " + (delivery.id || "unknown"), new Date().toISOString()].filter(Boolean).join("; "),
+    });
+    if (!ok) console.error("Resend accepted but Airtable update failed; reconcile", form, id);
+  } catch (err) {
+    console.error("Resource welcome outcome unknown; do not auto-retry", form, id, err);
+  }
+}
+
 // Handles the free-resource "unlock" gate next to the Shop lead text:
 // notifies Angella by email so submissions don't just sit unseen in the
 // Netlify Forms dashboard. (Netlify stores every submission there
@@ -315,7 +478,7 @@ async function handleFreeResourceGate(data) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  await airtableCreate("Leads", {
+  const lead = await resourceLeadCreate("free-resource-gate", data, {
     Name: name,
     Email: email,
     "Grade Band": gradeBand || undefined,
@@ -325,6 +488,7 @@ async function handleFreeResourceGate(data) {
     Notes: source && source !== "direct" ? `source: ${source}` : undefined,
   });
 
+  if (!lead.replay) await resourceWelcome(data, "free-resource-gate", lead.id);
   return { statusCode: 200, body: "free-resource-gate handled" };
 }
 
@@ -342,7 +506,7 @@ async function handleVaultSignup(data) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  await airtableCreate("Leads", {
+  const lead = await resourceLeadCreate("vault-signup", data, {
     Email: email,
     Resource: "ai-prompt-vault",
     Source: "vault-signup",
@@ -350,28 +514,99 @@ async function handleVaultSignup(data) {
     Notes: source && source !== "direct" ? `source: ${source}` : undefined,
   });
 
+  if (!lead.replay) await resourceWelcome(data, "vault-signup", lead.id);
   return { statusCode: 200, body: "vault-signup handled" };
 }
 
-// Handles the /giveaway page signup: logs the lead to Airtable Leads so the
-// welcome-email routine and the daily digest pick it up like every other form.
+// Handles the /giveaway page signup: logs the lead to Airtable Leads, then
+// sends the welcome email immediately (Resend) and marks the row Welcomed.
+// Sent at most once per email address: a repeat entry is logged but not
+// re-emailed. The hourly sync routine skips gold-giveaway entirely.
 async function handleGoldGiveaway(data) {
-  const email = data.email || "";
+  const email = String(data.email || "").trim().toLowerCase();
   const source = data.source || "direct";
-
-  if (!email) {
-    return { statusCode: 200, body: "Skipped: no email provided" };
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { statusCode: 200, body: "Skipped: invalid email" };
   }
 
-  await airtableCreate("Leads", {
+  const status = await giveawayWelcomeStatus(email);
+  if (!status.ok) return { statusCode: 200, body: "Giveaway lookup unavailable; Netlify submission retained" };
+  if (status.welcomed) return { statusCode: 200, body: "Giveaway already welcomed" };
+
+  // A pending record can mean that Resend accepted an earlier request but
+  // Airtable failed to record it. Never resend automatically on ambiguity.
+  // Resolve it against Resend's delivery log before a manual retry.
+  if (status.pendingId) {
+    console.warn("Giveaway welcome pending reconciliation", status.pendingId);
+    return { statusCode: 200, body: "Giveaway confirmation pending review" };
+  }
+
+  const sourceNote = source !== "direct" ? `source: ${source}` : "";
+  const recordId = await airtableCreate("Leads", {
     Email: email,
     Resource: "none / general",
     Source: "gold-giveaway",
     "Submitted At": new Date().toISOString(),
-    Notes: source && source !== "direct" ? `source: ${source}` : undefined,
+    Notes: [sourceNote, "welcome pending reconciliation if unconfirmed"].filter(Boolean).join("; "),
   });
+  if (!recordId) return { statusCode: 200, body: "Airtable write failed; Netlify submission retained" };
 
+  // Re-read after creation: if concurrent requests created multiple records,
+  // elect a single record before asking Resend to send. This reduces races,
+  // but Airtable does not offer a transactional uniqueness constraint.
+  const latest = await giveawayWelcomeStatus(email);
+  if (!latest.ok || latest.welcomed || latest.pendingId !== recordId) {
+    console.warn("Giveaway send deferred: another record owns confirmation", recordId);
+    return { statusCode: 200, body: "Giveaway confirmation deferred for review" };
+  }
+
+  const result = await sendGoldGiveawayWelcome(email);
+  if (result.ok) {
+    const updated = await airtableUpdate("Leads", recordId, {
+      Welcomed: true,
+      Notes: [sourceNote, `welcome accepted by Resend ${new Date().toISOString()}`].filter(Boolean).join("; "),
+    });
+    if (!updated) console.error("Resend accepted welcome but Airtable marking failed; reconcile manually", recordId);
+  } else {
+    console.error("Giveaway confirmation failed or outcome unknown; reconcile before retry", recordId);
+  }
   return { statusCode: 200, body: "gold-giveaway handled" };
+}
+
+async function sendGoldGiveawayWelcome(toEmail) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.error("RESEND_API_KEY is not set - gold-giveaway welcome not sent");
+    return { ok: false };
+  }
+  const text = "Hello, fellow educator! 🌱\n\nWelcome to the Chalk & Roots Syllable Celebration!\n\nYour giveaway entry has been received. We're celebrating the six syllable types and practical ways to help students recognize patterns, make connections, and explain their thinking.\n\nWhat to look forward to:\n- Syllable Live PD: practical literacy strategies for your classroom.\n- Flexible learning: instructional content will be available to explore on your own schedule.\n- Celebration giveaway: one eligible entrant will receive the premium SEE THE PATTERN Syllable Pattern Flipbook.\n\nWhen Chalk & Roots reaches 1,500 Instagram followers, we'll celebrate with a live random drawing during our Substack event. You do not need to attend live to be eligible to win. Event details will be announced when confirmed.\n\nExplore Chalk & Roots: https://chalkandroots.com\n\nThank you for being part of this journey and trusting me with your planning time.\n\nTeach the pattern. Build the connection. Grow the reader.\n\nWarmly,\nAngella\nFounder, Chalk & Roots";
+  const html = '<div style="font-family:Arial,Helvetica,sans-serif;color:#35302B;line-height:1.7;max-width:560px;margin:auto">' + text.split("\n").map(line => line ? '<p>' + line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>' : '').join('') + '</div>';
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "Idempotency-Key": require("crypto").createHash("sha256").update("gold-giveaway-welcome-v1:" + toEmail).digest("hex"),
+      },
+      body: JSON.stringify({
+        from: "Angella at Chalk & Roots <noreply@chalkandroots.com>",
+        reply_to: "chalkandroots@gmail.com",
+        to: [toEmail],
+        subject: "🌱 You’re In! Welcome to the Chalk & Roots Syllable Celebration",
+        text,
+        html,
+      }),
+    });
+    if (!res.ok) {
+      console.error("Resend welcome error:", res.status, await res.text());
+      return { ok: false };
+    }
+    return { ok: true };
+  } catch (err) {
+    console.error("Resend welcome fetch failed:", err);
+    return { ok: false };
+  }
 }
 
 // Handles the "What's Your Teaching Superpower?" quiz: notifies Angella
@@ -388,7 +623,7 @@ async function handleQuizResult(data) {
     return { statusCode: 200, body: "Skipped: no email provided" };
   }
 
-  await airtableCreate("Leads", {
+  const lead = await resourceLeadCreate("quiz-result", data, {
     Email: email,
     "Grade Band": gradeBand || undefined,
     Resource: "none / general",
@@ -397,6 +632,7 @@ async function handleQuizResult(data) {
     Notes: `biggest time drain: ${timeDrain}; goal: ${goal}${source && source !== "direct" ? `; source: ${source}` : ""}`,
   });
 
+  if (!lead.replay) await resourceWelcome(data, "quiz-result", lead.id);
   return { statusCode: 200, body: "quiz-result handled" };
 }
 

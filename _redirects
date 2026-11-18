@@ -10,10 +10,10 @@
 # current destination.)
 
 # --- Generator & tools ---
-/generator             https://chalk-roots-standards-generator.pages.dev/   302
-/generator/            https://chalk-roots-standards-generator.pages.dev/   302
-/generator.html        https://chalk-roots-standards-generator.pages.dev/   302
-/go/generator          https://chalk-roots-standards-generator.pages.dev/         302
+/generator             https://chalk-roots-standards-generator-plus.chalkandroots.workers.dev/#workspace   302
+/generator/            https://chalk-roots-standards-generator-plus.chalkandroots.workers.dev/#workspace   302
+/generator.html        https://chalk-roots-standards-generator-plus.chalkandroots.workers.dev/#workspace   302
+/go/generator          https://chalk-roots-standards-generator-plus.chalkandroots.workers.dev/#workspace         302
 /go/sage               /sage                                                        302
 /go/ai-continuum       /ai-continuum                                                302
 /go/escape-room        /escape-room-grade6-7                                        302

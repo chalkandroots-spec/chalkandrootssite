@@ -1,0 +1,10 @@
+name = "chalk-and-roots-site"
+pages_build_output_dir = "."
+compatibility_date = "2026-11-16"
+[previews]
+[env.preview]
+
+[[env.preview.d1_databases]]
+binding = "SUBMISSIONS_DB"
+database_name = "chalk-roots-submissions"
+database_id = "cbdfaf55-c8f9-4a1c-85b4-dd0782fe2a7c"
